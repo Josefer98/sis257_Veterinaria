@@ -15,4 +15,5 @@ FacturaServicios(id_factura,id_venta,id_servicio,cantidad,total_pago)
 Servicios(id_servicio,nombre,descripcion,tipo_servicio,precio)
 
 ## Diagrama
+https://drive.google.com/file/d/1oGQ3gspCaNSbaa9IjAtvv2WXifv3I3Pl/view?usp=sharing
 
