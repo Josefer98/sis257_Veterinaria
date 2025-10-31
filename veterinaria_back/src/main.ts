@@ -13,7 +13,7 @@ async function bootstrap() {
     .setTitle('API Rest Veterinaria')
     .setDescription('API Rest de la Veterinaria')
     .setVersion('1.0')
-    .addTag('clientes, Productos, FacturaProductos')
+    .addTag('clientes, Productos, FacturaProductos, ventas')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('apidoc', app, documentFactory);

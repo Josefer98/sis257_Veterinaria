@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Venta } from "src/ventas/entities/venta.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('clientes')
 export class Cliente {
@@ -23,6 +24,9 @@ export class Cliente {
     @Column('varchar', { name: 'raza', length: 50 })
     raza: string;
     
-    @Column('int', { name: 'edad_mascota' })
+    @Column('integer', { name: 'edad_mascota' })
     edadMascota: number;
+
+    @OneToMany(() => Venta, venta => venta.cliente)
+    ventas: Venta[];
 }
