@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDecimal, IsDefined, IsInt } from 'class-validator';
 
 export class CreateFacturaProductoDto {
+  @ApiProperty()
+  @IsDefined({ message: 'El campo id de la venta debe estar definido' })
+  @IsInt({ message: 'El campo id de la venta debe ser numérico' })
   idVenta: number;
 
   @ApiProperty()

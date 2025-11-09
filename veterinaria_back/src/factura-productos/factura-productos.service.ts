@@ -21,6 +21,7 @@ export class FacturaProductosService {
   ): Promise<FacturaProducto> {
     let facturaProducto = await this.facturaProductosRepository.findOneBy({
       idProducto: createFacturaProductoDto.idProducto,
+      idVenta: createFacturaProductoDto.idVenta,
     });
     if (facturaProducto)
       throw new ConflictException('El producto ya existe en la factura');
@@ -32,12 +33,13 @@ export class FacturaProductosService {
 
   async findAll(): Promise<FacturaProducto[]> {
     return this.facturaProductosRepository.find({
-      relations: { producto: true },
+      relations: { producto: true, venta: true },
       select: {
         id: true,
         cantidad: true,
         total: true,
         producto: { id: true },
+        venta: { id: true },
       },
       order: { id: 'ASC' },
     });
@@ -46,7 +48,7 @@ export class FacturaProductosService {
   async findOne(id: number): Promise<FacturaProducto> {
     const facturaProducto = await this.facturaProductosRepository.findOne({
       where: { id },
-      relations: { producto: true },
+      relations: { producto: true, venta: true },
     });
     if (!facturaProducto)
       throw new NotFoundException('FacturaProducto no encontrado');
