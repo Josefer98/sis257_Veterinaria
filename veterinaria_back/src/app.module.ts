@@ -7,6 +7,8 @@ import { ClientesModule } from './clientes/clientes.module';
 import { ProductosModule } from './productos/productos.module';
 import { FacturaProductosModule } from './factura-productos/factura-productos.module';
 import { VentasModule } from './ventas/ventas.module';
+import { ServiciosModule } from './servicios/servicios.module';
+import { FacturaseriviciosModule } from './facturaserivicios/facturaserivicios.module';
 
 @Module({
   imports: [
@@ -25,7 +27,9 @@ import { VentasModule } from './ventas/ventas.module';
     ClientesModule,
     ProductosModule,
     FacturaProductosModule,
-    VentasModule
+    VentasModule,
+    ServiciosModule,
+    FacturaseriviciosModule
   ],
   controllers: [AppController],
   providers: [AppService],

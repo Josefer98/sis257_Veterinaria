@@ -1,5 +1,6 @@
 import { Cliente } from "src/clientes/entities/cliente.entity";
 import { FacturaProducto } from "src/factura-productos/entities/factura-producto.entity";
+import { Facturaserivicio } from "src/facturaserivicios/entities/facturaserivicio.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('ventas')
@@ -22,5 +23,10 @@ export class Venta {
 
     @OneToMany(()=> FacturaProducto, facturaProducto => facturaProducto.venta)
     facturaProductos: FacturaProducto[];
+
+    @OneToMany(()=>Facturaserivicio, facturaserivicio => facturaserivicio.venta )
+    facturaserivicios: Facturaserivicio[];
+
+    
 
 }
