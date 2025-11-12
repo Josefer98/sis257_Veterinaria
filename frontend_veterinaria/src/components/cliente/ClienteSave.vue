@@ -1,0 +1,153 @@
+<script setup lang="ts">
+import type { Cliente } from '@/models/cliente'
+import http from '@/plugins/axios'
+import { Button, Dialog, InputNumber, InputText } from 'primevue'
+import { computed, ref, watch } from 'vue'
+
+const ENDPOINT = 'clientes'
+const props = defineProps({
+  mostrar: Boolean,
+  cliente: {
+    type: Object as () => Cliente,
+    default: () => ({}) as Cliente,
+  },
+  modoEdicion: Boolean,
+})
+const emit = defineEmits(['guardar', 'close'])
+
+const clientes = ref<Cliente[]>([])
+
+const dialogVisible = computed({
+  get: () => props.mostrar,
+  set: (value) => {
+    if (!value) emit('close')
+  },
+})
+
+const cliente = ref<Cliente>({ ...props.cliente })
+watch(
+  () => props.cliente,
+  (newVal) => {
+    cliente.value = { ...newVal }
+  },
+)
+
+async function handleSave() {
+  try {
+    const body = {
+      nombres: cliente.value.nombres,
+      apellidos: cliente.value.apellidos,
+      telefono: cliente.value.telefono,
+      nombreMascota: cliente.value.nombreMascota,
+      tipoMascota: cliente.value.tipoMascota,
+      raza: cliente.value.raza,
+      edadMascota: cliente.value.edadMascota,
+    }
+    if (props.modoEdicion) {
+      await http.patch(`${ENDPOINT}/${cliente.value.id}`, body)
+    } else {
+      await http.post(ENDPOINT, body)
+    }
+    emit('guardar')
+    cliente.value = {} as Cliente
+    dialogVisible.value = false
+  } catch (error: any) {
+    alert(error?.response?.data?.message)
+  }
+}
+</script>
+
+<template>
+  <div class="card flex justify-center">
+    <Dialog
+      v-model:visible="dialogVisible"
+      :header="props.modoEdicion ? 'Editar' : 'Crear'"
+      style="width: 25rem"
+    >
+      <div class="flex items-center gap-4 mb-4">
+        <label for="nombres" class="font-semibold w-3">Nombres</label>
+        <InputText
+          id="nombre"
+          v-model="cliente.nombres"
+          class="flex-auto"
+          autocomplete="off"
+          maxlength="40"
+          autofocus
+        />
+      </div>
+      <div class="flex items-center gap-4 mb-4">
+        <label for="apellidos" class="font-semibold w-3">Apellidos</label>
+        <InputText
+          id="apellidos"
+          v-model="cliente.apellidos"
+          class="flex-auto"
+          autocomplete="off"
+          maxlength="100"
+        />
+      </div>
+      <div class="flex items-center gap-4 mb-4">
+        <label for="telefono" class="font-semibold w-3">Telefono</label>
+        <InputText
+          id="telefono"
+          v-model="cliente.telefono"
+          class="flex-auto"
+          autocomplete="off"
+          maxlength="40"
+        />
+      </div>
+      <div class="flex items-center gap-4 mb-4">
+        <label for="nombreMascota" class="font-semibold w-3">Nombre de Mascota</label>
+        <InputText
+          id="nombreMascota"
+          v-model="cliente.nombreMascota"
+          class="flex-auto"
+          autocomplete="off"
+          maxlength="40"
+        />
+      </div>
+      <div class="flex items-center gap-4 mb-4">
+        <label for="tipoMascota" class="font-semibold w-3">Tipo de Mascota</label>
+        <InputText
+          id="tipoMascota"
+          v-model="cliente.tipoMascota"
+          class="flex-auto"
+          autocomplete="off"
+          maxlength="40"
+        />
+      </div>
+      <div class="flex items-center gap-4 mb-4">
+        <label for="raza" class="font-semibold w-3">Raza</label>
+        <InputText
+          id="raza"
+          v-model="cliente.raza"
+          class="flex-auto"
+          autocomplete="off"
+          maxlength="40"
+        />
+      </div>
+      <div class="flex items-center gap-4 mb-4">
+        <label for="edadMascota" class="font-semibold w-3">Edad de Mascota</label>
+        <InputNumber
+          id="edadMascota"
+          v-model="cliente.edadMascota"
+          class="flex-auto"
+          autocomplete="off"
+          maxlength="30"
+        />
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <Button
+          type="button"
+          label="Cancelar"
+          icon="pi pi-times"
+          severity="secondary"
+          @click="dialogVisible = false"
+        ></Button>
+        <Button type="button" label="Guardar" icon="pi pi-save" @click="handleSave"></Button>
+      </div>
+    </Dialog>
+  </div>
+</template>
+
+<style scoped></style>
