@@ -18,7 +18,7 @@ const ventasFiltrados = computed(() => {
       venta.cliente?.nombres?.toLowerCase().includes(busqueda.value.toLowerCase()),
   )
 })
-
+//arreglar
 async function obtenerLista() {
   const response = await http.get(ENDPOINT)
   ventas.value = Array.isArray(response.data) ? response.data : []
