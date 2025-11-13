@@ -20,8 +20,7 @@ const ventasFiltrados = computed(() => {
 })
 //arreglar
 async function obtenerLista() {
-  const response = await http.get(ENDPOINT)
-  ventas.value = Array.isArray(response.data) ? response.data : []
+  ventas.value= await http.get(ENDPOINT).then((response) => response.data)
 }
 
 function emitirEdicion(venta: Venta) {

@@ -27,7 +27,8 @@ export class VentasService {
       select: {
         id: true,
         fecha: true,
-        cliente: { id: true },
+        total: true,
+        cliente: { id: true, nombres: true, nombreMascota: true },
       },
       order: { id: 'ASC' },
     });
@@ -43,8 +44,7 @@ export class VentasService {
   }
 
   async update(id: number, updateVentaDto: UpdateVentaDto): Promise<Venta> {
-    const venta = await this.ventasRepository.findOneBy({ id });
-    if (!venta) throw new NotFoundException('Venta no encontrada');
+    const venta = await this.findOne( id );
     Object.assign(venta, updateVentaDto);
     return this.ventasRepository.save(venta);
   }

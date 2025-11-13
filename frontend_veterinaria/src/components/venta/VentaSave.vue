@@ -50,8 +50,7 @@ async function obtenerCliente() {
 async function handleSave() {
   try {
     const body = {
-      nombres: venta.value.cliente.nombres,
-      nombreMascota: venta.value.cliente.nombreMascota,
+      idCliente: venta.value.idCliente,
       fecha: venta.value.fecha,
       total: venta.value.total,
     }
@@ -69,7 +68,7 @@ async function handleSave() {
 }
 
 const ventas = ref<Venta>({ ...props.venta })
-const idCliente = ref<Cliente>
+const idCliente = ref<number>(0)
 watch(
   () => props.mostrar,
   (nuevoValor) => {
@@ -77,7 +76,11 @@ watch(
       obtenerCliente()
 
       if (props.venta?.id) {
+        venta.value ={ ...props.venta  }
+        idCliente.value = props.venta.cliente.id
       } else {
+        idCliente.value = 0
+        venta.value = {} as Venta
       }
     }
   },
@@ -92,9 +95,9 @@ watch(
       style="width: 25rem"
     >
       <div class="flex items-center gap-4 mb-4">
-        <label for="nombres" class="font-semibold w-3">Nombre del cliente</label>
+        <label for="cliente" class="font-semibold w-3">Nombre del cliente</label>
         <Select
-          id="nombres"
+          id="cliente"
           v-model="venta.idCliente"
           :options="clientes"
           optionLabel="nombres"
@@ -103,20 +106,6 @@ watch(
           autofocus
         />
       </div>
-
-      <div class="flex items-center gap-4 mb-4">
-        <label for="nombreMascota" class="font-semibold w-3">Nombre de Mascota</label>
-        <Select
-          id="nombreMascota"
-          v-model="venta.idCliente"
-          :options="clientes"
-          optionLabel="nombreMascota"
-          optionValue="id"
-          class="flex-auto"
-          autofocus
-        />
-      </div>
-
       <div class="flex items-center gap-4 mb-4">
         <label for="fecha" class="font-semibold w-3">Fecha</label>
         <Calendar
