@@ -97,8 +97,7 @@ async function handleSave() {
           autocomplete="off"
           mode="decimal"
           :min-fraction-digits="2"
-          :max-fraction-digits="2"
-          
+          :max-fraction-digits="2"      
         />
       </div>
       <div class="flex items-center gap-4 mb-4">

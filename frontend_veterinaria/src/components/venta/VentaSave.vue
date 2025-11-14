@@ -40,6 +40,7 @@ watch(
   () => props.venta,
   (newVal) => {
     venta.value = { ...newVal }
+    venta.value.idCliente = newVal?.cliente?.id 
   },
 )
 
@@ -49,6 +50,7 @@ async function obtenerCliente() {
 
 async function handleSave() {
   try {
+    console.log("ID enviado:", venta.value.idCliente)
     const body = {
       idCliente: venta.value.idCliente,
       fecha: venta.value.fecha,
@@ -67,8 +69,7 @@ async function handleSave() {
   }
 }
 
-const ventas = ref<Venta>({ ...props.venta })
-const idCliente = ref<number>(0)
+
 watch(
   () => props.mostrar,
   (nuevoValor) => {
@@ -77,9 +78,8 @@ watch(
 
       if (props.venta?.id) {
         venta.value ={ ...props.venta  }
-        idCliente.value = props.venta.cliente.id
+        venta.value.idCliente = props.venta.cliente?.id
       } else {
-        idCliente.value = 0
         venta.value = {} as Venta
       }
     }
@@ -103,7 +103,8 @@ watch(
           optionLabel="nombres"
           optionValue="id"
           class="flex-auto"
-          autofocus
+          :filter="true"
+          @change="venta.idCliente = Number(venta.idCliente)"
         />
       </div>
       <div class="flex items-center gap-4 mb-4">

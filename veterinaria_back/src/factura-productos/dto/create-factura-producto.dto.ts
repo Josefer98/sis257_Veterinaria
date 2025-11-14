@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDecimal, IsDefined, IsInt } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDecimal, IsDefined, IsInt, IsNumber } from 'class-validator';
 
 export class CreateFacturaProductoDto {
   @ApiProperty()
@@ -11,14 +12,24 @@ export class CreateFacturaProductoDto {
   @IsDefined({ message: 'El campo id del producto debe estar definido' })
   @IsInt({ message: 'El campo id del producto debe ser numérico' })
   idProducto: number;
-  
+
   @ApiProperty()
-    @IsDefined({ message: 'El campo cantidad debe estar definido' })
-    @IsInt({ message: 'El campo cantidad debe ser numérico' })
+  @IsDefined({ message: 'El campo cantidad debe estar definido' })
+  @IsInt({ message: 'El campo cantidad debe ser numérico' })
   cantidad: number;
 
-    @ApiProperty()
-    @IsDefined({ message: 'El campo total debe estar definido' })
-    @IsDecimal({}, { message: 'El campo total debe ser un número decimal' })
+  @ApiProperty()
+  @IsDefined({ message: 'El total debe estar definido' })
+  @Transform(({ value }) => {
+    const num = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(num)) throw new Error('El total debe ser un numero decimal');
+    return num;
+  })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: 'El total debe ser un numero decimal con maximo dos decimales',
+    },
+  )
   total: number;
 }

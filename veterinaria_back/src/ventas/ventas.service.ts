@@ -46,6 +46,7 @@ export class VentasService {
   async update(id: number, updateVentaDto: UpdateVentaDto): Promise<Venta> {
     const venta = await this.findOne( id );
     Object.assign(venta, updateVentaDto);
+    delete venta.cliente;
     return this.ventasRepository.save(venta);
   }
 
