@@ -92,7 +92,7 @@ defineExpose({ obtenerLista })
       header="Confirmar Eliminación"
       :style="{ width: '25rem' }"
     >
-      <p>¿Estás seguro de que deseas eliminar la venta {{ ventaDelete?.cliente.nombres }} ?</p>
+      <p>¿Estás seguro de que deseas eliminar la venta {{ ventaDelete?.idCliente }} ?</p>
       <div class="flex justify-end gap-2">
         <Button
           type="button"

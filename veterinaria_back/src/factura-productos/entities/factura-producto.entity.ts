@@ -1,29 +1,47 @@
-import { Producto } from "src/productos/entities/producto.entity";
-import { Venta } from "src/ventas/entities/venta.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Producto } from 'src/productos/entities/producto.entity';
+import { Venta } from 'src/ventas/entities/venta.entity';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('factura_productos')
 export class FacturaProducto {
   @PrimaryGeneratedColumn('identity')
-    id: number;
+  id: number;
 
-    @Column('integer', { name: 'id_venta' })
-    idVenta: number;
-  
-    @Column('integer', { name: 'id_producto' })
-    idProducto: number;
+  @Column('integer', { name: 'id_venta' })
+  idVenta: number;
 
-    @Column('int', { name: 'cantidad' })
-    cantidad: number;
+  @Column('integer', { name: 'id_producto' })
+  idProducto: number;
 
-    @Column('decimal', { precision: 10, scale: 2 })
-    total: number;
+  @Column('int', { name: 'cantidad' })
+  cantidad: number;
 
-    @ManyToOne(() => Producto, producto => producto.facturaProductos)
-    @JoinColumn({name: 'id_producto' , referencedColumnName: 'id'})
-    producto: Producto; 
+  @Column('decimal', { precision: 10, scale: 2 })
+  total: number;
 
-    @ManyToOne(() => Venta, venta => venta.facturaProductos)
-    @JoinColumn({name: 'id_venta' , referencedColumnName: 'id'})
-    venta: Venta;
+  @CreateDateColumn({ name: 'fecha_creacion' })
+  fechaCreacion: Date;
+
+  @UpdateDateColumn({ name: 'fecha_actualizacion' })
+  fechaActualizacion: Date;
+
+  @DeleteDateColumn({ name: 'fecha_eliminacion' })
+  fechaEliminacion: Date;
+
+  @ManyToOne(() => Producto, (producto) => producto.facturaProductos)
+  @JoinColumn({ name: 'id_producto', referencedColumnName: 'id' })
+  producto: Producto;
+
+  @ManyToOne(() => Venta, (venta) => venta.facturaProductos)
+  @JoinColumn({ name: 'id_venta', referencedColumnName: 'id' })
+  venta: Venta;
 }

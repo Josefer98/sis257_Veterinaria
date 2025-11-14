@@ -96,7 +96,7 @@ defineExpose({ obtenerLista })
       header="Confirmar Eliminación"
       :style="{ width: '25rem' }"
     >
-      <p>¿Estás seguro de que deseas eliminar el artista {{ productoDelete?.nombre }} ?</p>
+      <p>¿Estás seguro de que deseas eliminar el producto {{ productoDelete?.nombre }} ?</p>
       <div class="flex justify-end gap-2">
         <Button
           type="button"

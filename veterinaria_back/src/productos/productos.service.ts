@@ -41,6 +41,6 @@ export class ProductosService {
 
   async remove(id: number): Promise<Producto> {
     const producto = await this.findOne(id);
-    return this.productosRepository.softRemove(producto);
+    return this.productosRepository.remove(producto);
   }
 }
