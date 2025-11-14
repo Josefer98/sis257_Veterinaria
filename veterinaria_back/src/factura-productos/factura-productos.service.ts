@@ -33,13 +33,13 @@ export class FacturaProductosService {
 
   async findAll(): Promise<FacturaProducto[]> {
     return this.facturaProductosRepository.find({
-      relations: { producto: true, venta: true },
+      relations: { producto: true, venta: {cliente:true} },
       select: {
         id: true,
         cantidad: true,
         total: true,
-        producto: { id: true },
-        venta: { id: true },
+        producto: { id: true, nombre:true },
+        venta: { id: true, cliente: {id:true, nombres:true} },
       },
       order: { id: 'ASC' },
     });

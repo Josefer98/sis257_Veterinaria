@@ -50,7 +50,6 @@ async function obtenerCliente() {
 
 async function handleSave() {
   try {
-    console.log("ID enviado:", venta.value.idCliente)
     const body = {
       idCliente: venta.value.idCliente,
       fecha: venta.value.fecha,

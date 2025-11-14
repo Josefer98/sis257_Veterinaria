@@ -59,6 +59,7 @@ defineExpose({ obtenerLista })
         <tr>
           <th>Nro.</th>
           <th>Cliente</th>
+          <th>Producto</th>
           <th>Cantidad</th>
           <th>Total</th>
           <th>Acciones</th>
@@ -68,6 +69,7 @@ defineExpose({ obtenerLista })
         <tr v-for="(facturaProducto, index) in facturaProductosFiltrados" :key="facturaProducto.id">
           <td>{{ index + 1 }}</td>
           <td>{{ facturaProducto.venta.cliente.nombres }}</td>
+          <td>{{ facturaProducto.producto.nombre }}</td>
           <td>{{ facturaProducto.cantidad }}</td>
           <td>{{ facturaProducto.total }}</td>
           <td>
