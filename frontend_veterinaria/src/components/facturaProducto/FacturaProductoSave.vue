@@ -109,7 +109,7 @@ watch(
           id="producto"
           v-model="facturaProducto.idProducto"
           :options="productos"
-          optionLabel="nombres"
+          optionLabel="nombre"
           optionValue="id"
           class="flex-auto"
           :filter="true"
