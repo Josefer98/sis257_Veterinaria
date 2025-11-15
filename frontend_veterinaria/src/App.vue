@@ -16,7 +16,9 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/clientes">Clientes</RouterLink>
         <RouterLink to="/ventas">Ventas</RouterLink>
         <RouterLink to="/productos">Productos</RouterLink>
+        <RouterLink to="/servicios">Servicios</RouterLink>
         <RouterLink to="/facturaProductos">Factura de venta Productos</RouterLink>
+        <RouterLink to="/facturaserivicios">Factura de venta Servicios</RouterLink>
       </nav>
     </div>
   </header>
