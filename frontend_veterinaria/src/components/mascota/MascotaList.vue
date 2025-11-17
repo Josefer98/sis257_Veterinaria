@@ -1,40 +1,39 @@
 <script setup lang="ts">
-
-import type { FacturaProducto } from '@/models/facturaproducto'
+import type { Mascota } from '@/models/mascota'
 import http from '@/plugins/axios'
 import { Button, Dialog, InputGroup, InputGroupAddon, InputText } from 'primevue'
 import { computed, onMounted, ref } from 'vue'
 
-const ENDPOINT = 'factura-productos'
-const facturaProductos = ref<FacturaProducto[]>([])
-const facturaProductoDelete = ref<FacturaProducto | null>(null)
+const ENDPOINT = 'mascotas'
+const mascotas = ref<Mascota[]>([])
+const mascotaDelete = ref<Mascota | null>(null)
 const mostrarConfirmDialog = ref<boolean>(false)
 const busqueda = ref<string>('')
 const emit = defineEmits(['edit'])
 
-const facturaProductosFiltrados = computed(() => {
-  return facturaProductos.value.filter(
-    (facturaProducto) =>
-      facturaProducto.venta.cliente?.nombreMascota?.toLowerCase().includes(busqueda.value.toLowerCase()) ||
-      facturaProducto.venta.cliente?.nombres?.toLowerCase().includes(busqueda.value.toLowerCase()),
+const mascotasFiltrados = computed(() => {
+  return mascotas.value.filter(
+    (mascota) =>
+      mascota.nombre?.toLowerCase().includes(busqueda.value.toLowerCase()) ||
+      mascota.raza?.toLowerCase().includes(busqueda.value.toLowerCase()),
   )
 })
-//arreglar
+
 async function obtenerLista() {
-  facturaProductos.value= await http.get(ENDPOINT).then((response) => response.data)
+  mascotas.value = await http.get(ENDPOINT).then((response) => response.data)
 }
 
-function emitirEdicion(facturaProducto: FacturaProducto) {
-  emit('edit', facturaProducto)
+function emitirEdicion(mascota: Mascota) {
+  emit('edit', mascota)
 }
 
-function mostrarEliminarConfirm(facturaProducto: FacturaProducto) {
-  facturaProductoDelete.value = facturaProducto
+function mostrarEliminarConfirm(mascota: Mascota) {
+  mascotaDelete.value = mascota
   mostrarConfirmDialog.value = true
 }
 
 async function eliminar() {
-  await http.delete(`${ENDPOINT}/${facturaProductoDelete.value?.id}`)
+  await http.delete(`${ENDPOINT}/${mascotaDelete.value?.id}`)
   obtenerLista()
   mostrarConfirmDialog.value = false
 }
@@ -58,31 +57,33 @@ defineExpose({ obtenerLista })
       <thead>
         <tr>
           <th>Nro.</th>
-          <th>Cliente</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Total</th>
+          <th>Nombre del Cliente</th>
+          <th>Nombre de Mascota</th>
+          <th>Especie</th>
+          <th>Raza</th>
+          <th>edad</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(facturaProducto, index) in facturaProductosFiltrados" :key="facturaProducto.id">
+        <tr v-for="(mascota, index) in mascotasFiltrados" :key="mascota.id">
           <td>{{ index + 1 }}</td>
-          <td>{{ facturaProducto.venta.cliente.nombres }}</td>
-          <td>{{ facturaProducto.producto.nombre }}</td>
-          <td>{{ facturaProducto.cantidad }}</td>
-          <td>{{ facturaProducto.total }}</td>
+          <td>{{ mascota.clientes.nombres }}</td>
+          <td>{{ mascota.nombre }}</td>
+          <td>{{ mascota.especie }}</td>
+          <td>{{ mascota.raza }}</td>
+          <td>{{ mascota.edad }}</td>
           <td>
-            <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(facturaProducto)" />
+            <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(mascota)" />
             <Button
               icon="pi pi-trash"
               aria-label="Eliminar"
               text
-              @click="mostrarEliminarConfirm(facturaProducto)"
+              @click="mostrarEliminarConfirm(mascota)"
             />
           </td>
         </tr>
-        <tr v-if="facturaProductosFiltrados.length === 0">
+        <tr v-if="mascotasFiltrados.length === 0">
           <td colspan="4">No se encontraron resultados.</td>
         </tr>
       </tbody>
@@ -93,7 +94,7 @@ defineExpose({ obtenerLista })
       header="Confirmar Eliminación"
       :style="{ width: '25rem' }"
     >
-      <p>¿Estás seguro de que deseas eliminar la factura de  {{ facturaProductoDelete?.venta.cliente.nombres }} ?</p>
+      <p>¿Estás seguro de que deseas eliminar la mascota {{ mascotaDelete?.nombre }} ?</p>
       <div class="flex justify-end gap-2">
         <Button
           type="button"

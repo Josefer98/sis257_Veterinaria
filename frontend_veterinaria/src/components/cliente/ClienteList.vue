@@ -15,7 +15,7 @@ const clientesFiltrados = computed(() => {
   return clientes.value.filter(
     (cliente) =>
       cliente.nombres.toLowerCase().includes(busqueda.value.toLowerCase()) ||
-      cliente.nombreMascota.toLowerCase().includes(busqueda.value.toLowerCase()),
+      cliente.apellidos.toLowerCase().includes(busqueda.value.toLowerCase()),
   )
 })
 
@@ -60,10 +60,7 @@ defineExpose({ obtenerLista })
           <th>Nombres</th>
           <th>Apellidos</th>
           <th>Telefono</th>
-          <th>Nombre de Mascota</th>
-          <th>Tipo de Mascota</th>
-          <th>Raza</th>
-          <th>Edad de Mascota</th>
+          <th>Direccion</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -73,10 +70,7 @@ defineExpose({ obtenerLista })
           <td>{{ cliente.nombres }}</td>
           <td>{{ cliente.apellidos }}</td>
           <td>{{ cliente.telefono }}</td>
-          <td>{{ cliente.nombreMascota }}</td>
-          <td>{{ cliente.tipoMascota }}</td>
-          <td>{{ cliente.raza }}</td>
-          <td>{{ cliente.edadMascota }}</td>
+          <td>{{ cliente.direccion }}</td>
           <td>
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(cliente)" />
             <Button

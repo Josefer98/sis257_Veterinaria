@@ -38,10 +38,7 @@ async function handleSave() {
       nombres: cliente.value.nombres,
       apellidos: cliente.value.apellidos,
       telefono: cliente.value.telefono,
-      nombreMascota: cliente.value.nombreMascota,
-      tipoMascota: cliente.value.tipoMascota,
-      raza: cliente.value.raza,
-      edadMascota: cliente.value.edadMascota,
+      direccion: cliente.value.direccion,
     }
     if (props.modoEdicion) {
       await http.patch(`${ENDPOINT}/${cliente.value.id}`, body)
@@ -95,44 +92,15 @@ async function handleSave() {
           maxlength="40"
         />
       </div>
+
       <div class="flex items-center gap-4 mb-4">
-        <label for="nombreMascota" class="font-semibold w-3">Nombre de Mascota</label>
+        <label for="direccion" class="font-semibold w-3">Direccion</label>
         <InputText
-          id="nombreMascota"
-          v-model="cliente.nombreMascota"
+          id="direccion"
+          v-model="cliente.direccion"
           class="flex-auto"
           autocomplete="off"
           maxlength="40"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="tipoMascota" class="font-semibold w-3">Tipo de Mascota</label>
-        <InputText
-          id="tipoMascota"
-          v-model="cliente.tipoMascota"
-          class="flex-auto"
-          autocomplete="off"
-          maxlength="40"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="raza" class="font-semibold w-3">Raza</label>
-        <InputText
-          id="raza"
-          v-model="cliente.raza"
-          class="flex-auto"
-          autocomplete="off"
-          maxlength="40"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="edadMascota" class="font-semibold w-3">Edad de Mascota</label>
-        <InputNumber
-          id="edadMascota"
-          v-model="cliente.edadMascota"
-          class="flex-auto"
-          autocomplete="off"
-          maxlength="30"
         />
       </div>
 

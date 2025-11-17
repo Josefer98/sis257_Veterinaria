@@ -14,13 +14,13 @@ const emit = defineEmits(['edit'])
 const ventasFiltrados = computed(() => {
   return ventas.value.filter(
     (venta) =>
-      venta.cliente?.nombreMascota?.toLowerCase().includes(busqueda.value.toLowerCase()) ||
+      venta.cliente?.telefono?.toLowerCase().includes(busqueda.value.toLowerCase()) ||
       venta.cliente?.nombres?.toLowerCase().includes(busqueda.value.toLowerCase()),
   )
 })
 
 async function obtenerLista() {
-  ventas.value= await http.get(ENDPOINT).then((response) => response.data)
+  ventas.value = await http.get(ENDPOINT).then((response) => response.data)
 }
 
 function emitirEdicion(venta: Venta) {
@@ -68,7 +68,7 @@ defineExpose({ obtenerLista })
         <tr v-for="(venta, index) in ventasFiltrados" :key="venta.id">
           <td>{{ index + 1 }}</td>
           <td>{{ venta.cliente.nombres }}</td>
-          <td>{{ venta.cliente.nombreMascota }}</td>
+          <td>{{ venta.cliente.telefono }}</td>
           <td>{{ venta.fecha }}</td>
           <td>{{ venta.total }}</td>
           <td>

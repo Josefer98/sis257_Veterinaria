@@ -32,8 +32,10 @@ export class MascotasService {
       select:{
         id:true,
         nombre:true,
+        especie:true,
         raza:true,
-        clientes:{id:true,nombres:true}
+        edad:true,
+        clientes:{id:true, nombres:true}
       }
     });
   }

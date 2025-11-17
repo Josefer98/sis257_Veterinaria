@@ -38,14 +38,9 @@ const router = createRouter({
       component: () => import('../views/ServicioView.vue'),
     },
     {
-      path: '/facturaProductos',
-      name: 'facturaProductos',
-      component: () => import('../views/FacturaProductoView.vue'),
-    },
-        {
-      path: '/facturaserivicios',
-      name: 'facturaserivicios',
-      component: () => import('../views/FacturaseriviciosView.vue'),
+      path: '/mascotas',
+      name: 'mascotas',
+      component: () => import('../views/MascotaView.vue'),
     },
   ],
 })
