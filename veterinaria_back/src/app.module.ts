@@ -5,10 +5,10 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientesModule } from './clientes/clientes.module';
 import { ProductosModule } from './productos/productos.module';
-import { FacturaProductosModule } from './factura-productos/factura-productos.module';
 import { VentasModule } from './ventas/ventas.module';
 import { ServiciosModule } from './servicios/servicios.module';
-import { FacturaseriviciosModule } from './facturaserivicios/facturaserivicios.module';
+import { MascotasModule } from './mascotas/mascotas.module';
+import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
 
 @Module({
   imports: [
@@ -26,10 +26,10 @@ import { FacturaseriviciosModule } from './facturaserivicios/facturaserivicios.m
     }),
     ClientesModule,
     ProductosModule,
-    FacturaProductosModule,
     VentasModule,
     ServiciosModule,
-    FacturaseriviciosModule
+    MascotasModule,
+    DetalleVentasModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -26,28 +26,10 @@ export class CreateClienteDto {
     readonly telefono: string;
 
     @ApiProperty()
-    @IsNotEmpty({ message: 'El campo nombre de la mascota no debe estar vacío' })
-    @IsString({ message: 'El campo nombre de la mascota debe ser una cadena de texto' })
-    @MaxLength(50, { message: 'El campo nombre de la mascota no debe exceder los 50 caracteres' })
+    @IsNotEmpty({ message: 'El campo direcion no debe estar vacío' })
+    @IsString({ message: 'El direccion debe ser una cadena de texto' })
+    @MaxLength(50, { message: 'El direccion no debe exceder los 50 caracteres' })
     @Transform(({ value }): string | undefined => (typeof value === 'string' ? value.trim() : value))
-    readonly nombreMascota: string;
+    readonly direccion: string;
 
-    @ApiProperty()
-    @IsNotEmpty({ message: 'El campo tipo de mascota no debe estar vacío' })
-    @IsString({ message: 'El campo tipo de mascota debe ser una cadena de texto' })
-    @MaxLength(50, { message: 'El campo tipo de mascota no debe exceder los 50 caracteres' })
-    @Transform(({ value }): string | undefined => (typeof value === 'string' ? value.trim() : value))
-    readonly tipoMascota: string;
-
-    @ApiProperty()
-    @IsNotEmpty({ message: 'El campo raza no debe estar vacío' })
-    @IsString({ message: 'El campo raza debe ser una cadena de texto' })
-    @MaxLength(50, { message: 'El campo raza no debe exceder los 50 caracteres' })
-    @Transform(({ value }): string | undefined => (typeof value === 'string' ? value.trim() : value))
-    readonly raza: string;
-
-    @ApiProperty()
-    @IsNotEmpty({ message: 'El campo edad de la mascota no debe estar vacío' })
-    @IsInt({ message: 'El campo edad de la mascota debe ser un número entero' })
-    readonly edadMascota: number;
 }

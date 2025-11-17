@@ -1,4 +1,5 @@
-import { FacturaProducto } from 'src/factura-productos/entities/factura-producto.entity';
+
+import { DetalleVenta } from 'src/detalle-ventas/entities/detalle-venta.entity';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('productos')
@@ -30,9 +31,6 @@ export class Producto {
   @DeleteDateColumn({ name: 'fecha_eliminacion' })
   fechaEliminacion: Date;
 
-  @OneToMany(
-    () => FacturaProducto,
-    (facturaProducto) => facturaProducto.producto,
-  )
-  facturaProductos: FacturaProducto[];
+  @OneToMany(() => DetalleVenta, (detalleVenta) => detalleVenta.producto)
+  detalleVentas: DetalleVenta[];
 }

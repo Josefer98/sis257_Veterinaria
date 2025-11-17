@@ -1,5 +1,6 @@
+import { Mascota } from 'src/mascotas/entities/mascota.entity';
 import { Venta } from 'src/ventas/entities/venta.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('clientes')
 export class Cliente {
@@ -15,17 +16,8 @@ export class Cliente {
   @Column('varchar', { name: 'telefono', length: 15 })
   telefono: string;
 
-  @Column('varchar', { name: 'nombre_mascota', length: 50 })
-  nombreMascota: string;
-
-  @Column('varchar', { name: 'tipo_mascota', length: 50 })
-  tipoMascota: string;
-
-  @Column('varchar', { name: 'raza', length: 50 })
-  raza: string;
-
-  @Column('integer', { name: 'edad_mascota' })
-  edadMascota: number;
+  @Column('varchar', { name: 'direccion', length: 200 })
+  direccion: string;
 
   @CreateDateColumn({ name: 'fecha_creacion' })
   fechaCreacion: Date;
@@ -38,4 +30,7 @@ export class Cliente {
 
   @OneToMany(() => Venta, (venta) => venta.cliente)
   ventas: Venta[];
+
+  @OneToMany(() => Mascota, (mascota) => mascota.clientes)
+  mascotas: Mascota[];
 }
