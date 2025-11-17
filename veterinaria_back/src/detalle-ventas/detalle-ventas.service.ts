@@ -17,6 +17,15 @@ export class DetalleVentasService {
 
   async findAll():Promise<DetalleVenta[]> {
     return this.detalleventasRepository.find({
+      relations:{producto:true, servicio:true},
+      select:{
+        id:true,
+        tipoItem:true,
+        cantidad:true,
+        idVenta:true,
+        producto:{id:true, nombre:true, precio:true},
+        servicio:{id:true, nombre:true, precio:true},
+      },
       order:{id: 'DESC'},
     });
   }

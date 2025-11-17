@@ -27,7 +27,15 @@ export class MascotasService {
   }
 
   async findAll(): Promise<Mascota[]> {
-    return this.mascotasRepository.find();
+    return this.mascotasRepository.find({
+      relations: { clientes: true},
+      select:{
+        id:true,
+        nombre:true,
+        raza:true,
+        clientes:{id:true,nombres:true}
+      }
+    });
   }
 
   async findOne(id: number): Promise<Mascota> {
