@@ -12,15 +12,15 @@ El software para la veterinaria busca automatizar la gestión de los procesos di
 
 La automatización ayudará a optimizar el tiempo, mejorar la atención a los clientes, mantener un registro preciso de las operaciones y garantizar un control adecuado de los productos y servicios. En general, permitirá que la veterinaria funcione de manera más ordenada, profesional y orientada a brindar un mejor servicio.
 ### Entidades tentativas
-Cliente(id_cliente,nombres,apellidos,telefono,nombre_mascota,tipo_mascota,raza,edad_mascota)
+Cliente(id_cliente,nombres,apellidos,telefono,direccion)
+
+Mascotas(id_macota,nombre,especie,raza,edad)
 
 Ventas(id_venta,id_cliente,fecha,total)
 
-FacturaProductos(id_producto,id_venta,id_producto,cantidad,total_pago)
+Detalle-ventas(id_detalle-venta,id_venta,id_cliente,id_servicio,tipo_item,cantidad, precio_unitario, subtotal)
 
 Productos(id_producto,nombre,categoria,descripcion,precio,stock)
-
-FacturaServicios(id_factura,id_venta,id_servicio,cantidad,total_pago)
 
 Servicios(id_servicio,nombre,descripcion,tipo_servicio,precio)
 
