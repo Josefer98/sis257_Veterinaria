@@ -9,28 +9,52 @@ const ventas = ref<Venta[]>([])
 const ventaDelete = ref<Venta | null>(null)
 const mostrarConfirmDialog = ref<boolean>(false)
 const busqueda = ref<string>('')
+
 const emit = defineEmits(['edit'])
 
+// --------------------------------------------------------
+// 🔍 FILTRO
+// --------------------------------------------------------
 const ventasFiltrados = computed(() => {
-  return ventas.value.filter(
-    (venta) =>
-      venta.cliente?.telefono?.toLowerCase().includes(busqueda.value.toLowerCase()) ||
-      venta.cliente?.nombres?.toLowerCase().includes(busqueda.value.toLowerCase()),
-  )
+  const query = busqueda.value.toLowerCase()
+
+  return ventas.value.filter((v) => {
+    return (
+      v.id?.toString().includes(query) ||
+      String(v.fecha ?? '').toLowerCase().includes(query) ||
+      v.cliente?.nombres?.toLowerCase().includes(query) ||
+      v.cliente?.telefono?.toLowerCase().includes(query)
+    )
+  })
 })
 
+// --------------------------------------------------------
+// 📌 OBTENER LISTA
+// --------------------------------------------------------
 async function obtenerLista() {
-  ventas.value = await http.get(ENDPOINT).then((response) => response.data)
+  ventas.value = await http.get(ENDPOINT).then((r) => r.data)
 }
 
+// --------------------------------------------------------
+// ✏️ EDITAR
+// --------------------------------------------------------
 function emitirEdicion(venta: Venta) {
   emit('edit', venta)
 }
 
+// --------------------------------------------------------
+// 🗑️ ELIMINAR
+// --------------------------------------------------------
 function mostrarEliminarConfirm(venta: Venta) {
   ventaDelete.value = venta
   mostrarConfirmDialog.value = true
 }
+function formatearFecha(fecha?: string | Date | null) {
+  if (!fecha) return ''
+  const d = fecha instanceof Date ? fecha : new Date(fecha)
+  return d.toLocaleDateString('es-BO') // dd/mm/aaaa
+}
+
 
 async function eliminar() {
   await http.delete(`${ENDPOINT}/${ventaDelete.value?.id}`)
@@ -49,7 +73,7 @@ defineExpose({ obtenerLista })
     <div class="col-7 pl-0 mt-3">
       <InputGroup>
         <InputGroupAddon><i class="pi pi-search"></i></InputGroupAddon>
-        <InputText v-model="busqueda" type="text" placeholder="Buscar por id o fecha" />
+        <InputText v-model="busqueda" type="text" placeholder="Buscar por id, cliente o fecha" />
       </InputGroup>
     </div>
 
@@ -57,20 +81,19 @@ defineExpose({ obtenerLista })
       <thead>
         <tr>
           <th>Nro.</th>
-          <th>Nombre del Cliente</th>
-          <th>Nombre de Mascota</th>
+          <th>Cliente</th>
           <th>Fecha</th>
           <th>Total</th>
           <th>Acciones</th>
         </tr>
       </thead>
+
       <tbody>
         <tr v-for="(venta, index) in ventasFiltrados" :key="venta.id">
           <td>{{ index + 1 }}</td>
-          <td>{{ venta.cliente.nombres }}</td>
-          <td>{{ venta.cliente.telefono }}</td>
-          <td>{{ venta.fecha }}</td>
-          <td>{{ venta.total }}</td>
+          <td>{{ venta.cliente?.nombres }}</td>
+          <td>{{ formatearFecha(venta.fecha) }}</td>
+          <td>{{ venta.total }} BS</td>
           <td>
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(venta)" />
             <Button
@@ -81,19 +104,26 @@ defineExpose({ obtenerLista })
             />
           </td>
         </tr>
+
         <tr v-if="ventasFiltrados.length === 0">
-          <td colspan="4">No se encontraron resultados.</td>
+          <td colspan="6">No se encontraron resultados.</td>
         </tr>
       </tbody>
     </table>
 
+    <!-- Confirmación de Eliminación -->
     <Dialog
       v-model:visible="mostrarConfirmDialog"
       header="Confirmar Eliminación"
       :style="{ width: '25rem' }"
     >
-      <p>¿Estás seguro de que deseas eliminar la venta {{ ventaDelete?.idCliente }} ?</p>
-      <div class="flex justify-end gap-2">
+      <p>
+        ¿Estás seguro de que deseas eliminar la venta
+        <b>#{{ ventaDelete?.id }}</b> del cliente
+        <b>{{ ventaDelete?.cliente?.nombres }}</b>?
+      </p>
+
+      <div class="flex justify-end gap-2 mt-4">
         <Button
           type="button"
           label="Cancelar"
@@ -105,4 +135,21 @@ defineExpose({ obtenerLista })
     </Dialog>
   </div>
 </template>
-<style scoped></style>
+
+<style scoped>
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px;
+  border: 1px solid #057811;
+}
+
+th {
+  background: #11950c;
+}
+</style>
