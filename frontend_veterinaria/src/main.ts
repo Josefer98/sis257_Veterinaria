@@ -10,11 +10,17 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.min.css'
+import ConfirmationService from 'primevue/confirmationservice'
+
+
+
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+
+app.use(ConfirmationService)
 
 app.use(PrimeVue, {
   theme: {

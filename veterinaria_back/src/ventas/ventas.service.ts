@@ -79,7 +79,7 @@ export class VentasService {
         id: true,
         fecha: true,
         total: true,
-        cliente: { id: true, nombres: true },
+        cliente: { id: true, nombres: true, apellidos: true },
       },
       order: { id: 'ASC' },
     });

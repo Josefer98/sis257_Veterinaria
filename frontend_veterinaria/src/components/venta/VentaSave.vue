@@ -2,15 +2,11 @@
 import type { Cliente } from '@/models/cliente'
 import type { Venta } from '@/models/venta'
 import http from '@/plugins/axios'
-import {
-  Button,
-  Calendar,
-  Dialog,
-  Dropdown,
-  InputNumber,
-  Select
-} from 'primevue'
+import { Button, Calendar, Dialog, Dropdown, InputNumber, Select } from 'primevue'
 import { computed, ref, watch } from 'vue'
+import ClienteSave from '../cliente/ClienteSave.vue'
+
+// Importar el componente ClienteSave
 
 const ENDPOINT = 'ventas'
 
@@ -31,7 +27,7 @@ const emit = defineEmits(['guardar', 'close'])
 const clientes = ref<Cliente[]>([])
 const productos = ref<any[]>([])
 const servicios = ref<any[]>([])
-const items = ref<any[]>([])  // detalles de venta
+const items = ref<any[]>([]) // detalles de venta
 
 const dialogVisible = computed({
   get: () => props.mostrar,
@@ -50,11 +46,19 @@ const nuevoItem = ref({
   cantidad: 1,
 })
 
+// Control del diálogo para crear cliente
+const clienteDialogVisible = ref(false)
+
 /* ============================================================
     LOAD DATA
 ============================================================ */
 async function obtenerClientes() {
-  clientes.value = await http.get('clientes').then((res) => res.data)
+  const data = await http.get('clientes').then((res) => res.data)
+
+  clientes.value = data.map((c: Cliente) => ({
+    ...c,
+    labelCliente: `${c.nombres} ${c.apellidos}`,
+  }))
 }
 
 async function obtenerCatalogos() {
@@ -63,10 +67,10 @@ async function obtenerCatalogos() {
 }
 
 function fechaHoyBolivia() {
-  const hoy = new Date();
-  const options: Intl.DateTimeFormatOptions = { timeZone: 'America/La_Paz' };
-  const fechaBolivia = new Date(hoy.toLocaleString('en-US', options));
-  return fechaBolivia;
+  const hoy = new Date()
+  const options: Intl.DateTimeFormatOptions = { timeZone: 'America/La_Paz' }
+  const fechaBolivia = new Date(hoy.toLocaleString('en-US', options))
+  return fechaBolivia
 }
 
 watch(
@@ -85,7 +89,7 @@ watch(
         venta.value.fecha = fechaHoyBolivia()
       }
     }
-  }
+  },
 )
 
 /* ============================================================
@@ -175,6 +179,13 @@ async function handleSave() {
   }
 }
 
+// Función para actualizar la lista de clientes después de crear uno nuevo
+function clienteGuardado(nuevoCliente: Cliente) {
+  obtenerClientes().then(() => {
+    venta.value.idCliente = nuevoCliente.id
+    clienteDialogVisible.value = false
+  })
+}
 </script>
 
 <template>
@@ -190,22 +201,25 @@ async function handleSave() {
         <Select
           v-model="venta.idCliente"
           :options="clientes"
-          optionLabel="nombres"
+          optionLabel="labelCliente"
           optionValue="id"
+          placeholder="Seleccionar cliente"
           class="flex-auto"
           :filter="true"
+        />
+        <!-- Botón para abrir diálogo de nuevo cliente -->
+        <Button
+          icon="pi pi-plus"
+          label="Nuevo Cliente"
+          class="ml-2"
+          @click="clienteDialogVisible = true"
         />
       </div>
 
       <!-- FECHA -->
       <div class="flex items-center gap-4 mb-4">
         <label class="font-semibold w-3">Fecha</label>
-        <Calendar
-          v-model="venta.fecha"
-          class="flex-auto"
-          dateFormat="dd/mm/yy"
-          disabled
-        />
+        <Calendar v-model="venta.fecha" class="flex-auto" dateFormat="dd/mm/yy" disabled />
       </div>
 
       <hr class="my-3" />
@@ -218,7 +232,7 @@ async function handleSave() {
           v-model="nuevoItem.tipoItem"
           :options="[
             { label: 'Producto', value: 'producto' },
-            { label: 'Servicio', value: 'servicio' }
+            { label: 'Servicio', value: 'servicio' },
           ]"
           optionLabel="label"
           optionValue="value"
@@ -233,6 +247,7 @@ async function handleSave() {
           :options="productos"
           optionLabel="nombre"
           optionValue="id"
+          placeholder="Seleccionar producto"
           class="flex-auto"
         />
       </div>
@@ -276,9 +291,11 @@ async function handleSave() {
             <td>{{ item.tipoItem }}</td>
 
             <td>
-              {{ item.tipoItem === 'producto'
-                ? productos.find(p => p.id === item.idProducto)?.nombre
-                : servicios.find(s => s.id === item.idServicio)?.nombre }}
+              {{
+                item.tipoItem === 'producto'
+                  ? productos.find((p) => p.id === item.idProducto)?.nombre
+                  : servicios.find((s) => s.id === item.idServicio)?.nombre
+              }}
             </td>
 
             <td>{{ item.cantidad }}</td>
@@ -301,10 +318,22 @@ async function handleSave() {
       </div>
 
       <div class="flex justify-end gap-2 mt-4">
-        <Button label="Cancelar" icon="pi pi-times" severity="secondary" @click="dialogVisible = false" />
+        <Button
+          label="Cancelar"
+          icon="pi pi-times"
+          severity="secondary"
+          @click="dialogVisible = false"
+        />
         <Button label="Guardar" icon="pi pi-save" @click="handleSave" />
       </div>
     </Dialog>
+
+    <!-- DIÁLOGO CLIENTE -->
+    <ClienteSave
+      :mostrar="clienteDialogVisible"
+      @guardar="clienteGuardado($event)"
+      @close="clienteDialogVisible = false"
+    />
   </div>
 </template>
 

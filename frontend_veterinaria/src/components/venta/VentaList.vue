@@ -23,6 +23,7 @@ const ventasFiltrados = computed(() => {
       v.id?.toString().includes(query) ||
       String(v.fecha ?? '').toLowerCase().includes(query) ||
       v.cliente?.nombres?.toLowerCase().includes(query) ||
+      v.cliente?.apellidos?.toLowerCase().includes(query) ||
       v.cliente?.telefono?.toLowerCase().includes(query)
     )
   })
@@ -91,7 +92,7 @@ defineExpose({ obtenerLista })
       <tbody>
         <tr v-for="(venta, index) in ventasFiltrados" :key="venta.id">
           <td>{{ index + 1 }}</td>
-          <td>{{ venta.cliente?.nombres }}</td>
+          <td>{{ venta.cliente?.nombres }} {{ venta.cliente?.apellidos }}</td>
           <td>{{ formatearFecha(venta.fecha) }}</td>
           <td>{{ venta.total }} BS</td>
           <td>
