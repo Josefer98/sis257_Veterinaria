@@ -75,7 +75,7 @@ El backend es responsable de la logica de negocio y la comunicacion con la base 
 
 Crea un archivo llamado `.env` en la raiz de la carpeta del backend y configura las variables de conexion. **Usa esta configuracion exacta:**
 
-```env
+.env
 # Configuracion del Servidor
 PORT=3000
 NODE_ENV=development
@@ -86,3 +86,53 @@ DB_PORT=5432
 DB_USERNAME=bd_veterinaria
 DB_PASSWORD=123456
 DB_DATABASE=bd_veterinaria
+
+
+### 2.2. Instalacion y Ejecucion
+
+1.  Navega a la carpeta del backend en tu terminal:
+    ```bash
+    cd [nombre_de_carpeta_backend]
+    ```
+2.  **Instala Node.js (si no esta instalado).**
+3.  Instala las dependencias:
+    ```bash
+    npm install
+    ```
+4.  Levanta el servidor en modo desarrollo:
+    ```bash
+    npm run start:dev
+    ```
+    El backend estara corriendo en `http://localhost:3000` (o el puerto que configuraste).
+
+---
+
+## 3. Frontend (Vue.js)
+
+El frontend es la interfaz de usuario de la aplicacion.
+
+### 3.1. Instalacion y Ejecucion
+
+1.  Abre una terminal nueva y navega a la carpeta del frontend:
+    ```bash
+    cd [nombre_de_carpeta_frontend]
+    ```
+2.  **Instala Node.js (si no esta instalado).**
+3.  Instala las dependencias:
+    ```bash
+    npm install
+    ```
+4.  Levanta la aplicacion en modo desarrollo:
+    ```bash
+    npm run dev
+    ```
+    La aplicacion web estara disponible en la URL que indique la consola (tipicamente `http://localhost:5173`).
+
+---
+
+## Uso Rapido
+
+| Componente | Carpeta | Comando para Levantar | URL Tipica |
+| :--- | :--- | :--- | :--- |
+| **Backend** | /backend | `npm run start:dev` | `http://localhost:3000` |
+| **Frontend** | /frontend | `npm run dev` | `http://localhost:5173` |
