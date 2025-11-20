@@ -12,9 +12,7 @@ const busqueda = ref<string>('')
 
 const emit = defineEmits(['edit'])
 
-// --------------------------------------------------------
-// 🔍 FILTRO
-// --------------------------------------------------------
+
 const ventasFiltrados = computed(() => {
   const query = busqueda.value.toLowerCase()
 
@@ -31,23 +29,17 @@ const ventasFiltrados = computed(() => {
   })
 })
 
-// --------------------------------------------------------
-// 📌 OBTENER LISTA
-// --------------------------------------------------------
+
 async function obtenerLista() {
   ventas.value = await http.get(ENDPOINT).then((r) => r.data)
 }
 
-// --------------------------------------------------------
-// ✏️ EDITAR
-// --------------------------------------------------------
+
 function emitirEdicion(venta: Venta) {
   emit('edit', venta)
 }
 
-// --------------------------------------------------------
-// 🗑️ ELIMINAR
-// --------------------------------------------------------
+
 function mostrarEliminarConfirm(venta: Venta) {
   ventaDelete.value = venta
   mostrarConfirmDialog.value = true
@@ -86,7 +78,6 @@ defineExpose({ obtenerLista })
           <th>Cliente</th>
           <th>Fecha</th>
           <th>Total</th>
-          <th>Acciones</th>
         </tr>
       </thead>
 
@@ -96,15 +87,6 @@ defineExpose({ obtenerLista })
           <td>{{ venta.cliente?.nombres }} {{ venta.cliente?.apellidos }}</td>
           <td>{{ formatearFecha(venta.fecha) }}</td>
           <td>{{ venta.total }} BS</td>
-          <td>
-            <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(venta)" />
-            <Button
-              icon="pi pi-trash"
-              aria-label="Eliminar"
-              text
-              @click="mostrarEliminarConfirm(venta)"
-            />
-          </td>
         </tr>
 
         <tr v-if="ventasFiltrados.length === 0">

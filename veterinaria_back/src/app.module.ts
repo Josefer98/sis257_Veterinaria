@@ -9,6 +9,8 @@ import { VentasModule } from './ventas/ventas.module';
 import { ServiciosModule } from './servicios/servicios.module';
 import { MascotasModule } from './mascotas/mascotas.module';
 import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,7 +31,9 @@ import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
     VentasModule,
     ServiciosModule,
     MascotasModule,
-    DetalleVentasModule
+    DetalleVentasModule,
+    UsuariosModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

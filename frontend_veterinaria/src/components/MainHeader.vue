@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useAuthStore } from '@/stores'
+import { useRoute } from 'vue-router'
+const authStore = useAuthStore()
+const location = useRoute()
+</script>
 <template>
   <header>
     <!--? Header Start -->
@@ -15,7 +21,7 @@
               <div class="menu-main d-flex align-items-center justify-content-end">
                 <!-- Main-menu -->
                 <div class="main-menu f-right d-none d-lg-block">
-                  <nav>
+                  <nav >
                     <ul id="navigation">
                       <li class="nav-item">
                         <RouterLink to="/" class="nav-link click-scroll">home</RouterLink>
@@ -45,7 +51,11 @@
                   </nav>
                 </div>
                 <div class="header-right-btn f-right d-none d-lg-block ml-30">
-                  <a href="#" class="header-btn">Usuario</a>
+                  
+          <RouterLink v-if="!authStore.token" to="/login" class="btn custom-btn d-lg-block d-none"
+            >Iniciar Sesión</RouterLink
+          >
+          <a v-else @click="authStore.logout()" class="btn custom-btn d-lg-block d-none" style="color: beige;">Salir</a>
                 </div>
               </div>
             </div>
