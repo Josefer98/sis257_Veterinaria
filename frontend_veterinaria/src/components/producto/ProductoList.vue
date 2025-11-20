@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import type { Producto } from '@/models/producto'
 import http from '@/plugins/axios'
 import { Dialog, InputGroup, InputGroupAddon, InputText } from 'primevue'
@@ -55,7 +54,7 @@ defineExpose({ obtenerLista })
       </InputGroup>
     </div>
 
-    <table>
+    <table class="styled-table">
       <thead>
         <tr>
           <th>Nro.</th>
@@ -110,4 +109,91 @@ defineExpose({ obtenerLista })
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.styled-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* separa filas para efecto "tarjeta" */
+  font-size: 15px;
+  text-align: center;
+}
+
+.styled-table thead th {
+  background: #f54927;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+}
+
+/* Agregamos divisiones verticales */
+.styled-table thead th:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 0;
+  height: calc(100% - 24px);
+  width: 1px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.styled-table tbody tr {
+  background: #f2bf5b;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  transition: 0.2s ease;
+}
+
+.styled-table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table tbody td {
+  padding: 12px 14px;
+  border: none;
+  color: #333;
+  text-align: center;
+  position: relative;
+}
+
+/* Divisiones verticales en filas */
+.styled-table tbody td:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 0;
+  height: calc(100% - 24px);
+  width: 1px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Redondear filas */
+.styled-table tbody tr td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.styled-table tbody tr td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* Columna de acciones más ordenada */
+.acciones {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Fila sin datos */
+.no-data {
+  text-align: center;
+  background: #f6f6f6;
+  color: #555;
+  border-radius: 10px;
+}
+</style>

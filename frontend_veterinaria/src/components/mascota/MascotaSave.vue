@@ -103,6 +103,7 @@ watch(
           optionLabel="nombres"
           optionValue="id"
           class="flex-auto"
+          placeholder="Seleccionar nombre"
           :filter="true"
           @change="mascota.idCliente = Number(mascota.idCliente)"
         />
@@ -114,7 +115,13 @@ watch(
 
       <div class="flex items-center gap-4 mb-4">
         <label for="especie" class="font-semibold w-3">Especie</label>
-        <InputText id="especie" v-model="mascota.especie" class="flex-auto" autocomplete="off" />
+        <InputText
+          id="especie"
+          v-model="mascota.especie"
+          class="flex-auto"
+          autocomplete="off"
+          placeholder="Tipo de mascota"
+        />
       </div>
       <div class="flex items-center gap-4 mb-4">
         <label for="raza" class="font-semibold w-3">Raza</label>

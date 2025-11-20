@@ -11,9 +11,7 @@ import Aura from '@primevue/themes/aura'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.min.css'
 import ConfirmationService from 'primevue/confirmationservice'
-
-
-
+import { updatePrimaryPalette, palette } from '@primevue/themes'
 
 const app = createApp(App)
 
@@ -32,5 +30,8 @@ app.use(PrimeVue, {
     },
   },
 })
+
+const colores = palette('#F54927')
+updatePrimaryPalette(colores)
 
 app.mount('#app')

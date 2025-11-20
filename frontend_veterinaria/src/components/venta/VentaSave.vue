@@ -223,7 +223,8 @@ function clienteGuardado(nuevoCliente: Cliente) {
       </div>
 
       <hr class="my-3" />
-      <h3 class="text-lg font-bold mb-3">Agregar Detalle</h3>
+
+      <h3 class="text-lg font-bold mb-3 text-white">Agregar Detalle</h3>
 
       <!-- TIPO -->
       <div class="flex items-center gap-4 mb-4">
@@ -275,7 +276,7 @@ function clienteGuardado(nuevoCliente: Cliente) {
       <hr class="my-4" />
 
       <!-- TABLA DE ITEMS -->
-      <h3 class="text-lg font-bold">Items Agregados</h3>
+      <h3 class="text-lg font-bold text-white">Items Agregados</h3>
 
       <table class="w-full mt-2">
         <thead>
