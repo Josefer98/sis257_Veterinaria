@@ -17,28 +17,35 @@
                 <div class="main-menu f-right d-none d-lg-block">
                   <nav>
                     <ul id="navigation">
-                      <li><a href="index.html">Home</a></li>
-                      <li><a href="about.html">About</a></li>
                       <li class="nav-item">
-                        <RouterLink to="/clientes" class="nav-link click-scroll">Clientes</RouterLink>
+                        <RouterLink to="/" class="nav-link click-scroll">home</RouterLink>
                       </li>
                       <li class="nav-item">
-                        <RouterLink to="/productos" class="nav-link click-scroll">Productos</RouterLink>
+                        <RouterLink to="/clientes" class="nav-link click-scroll"
+                          >Clientes</RouterLink
+                        >
                       </li>
-                      <li>
-                        <a href="blog.html">Blog</a>
-                        <ul class="submenu">
-                          <li><a href="blog.html">Blog</a></li>
-                          <li><a href="blog_details.html">Blog Details</a></li>
-                          <li><a href="elements.html">Element</a></li>
-                        </ul>
+                      <li class="nav-item">
+                        <RouterLink to="/productos" class="nav-link click-scroll"
+                          >Productos</RouterLink
+                        >
                       </li>
-                      <li><a href="contact.html">Contact</a></li>
+                      <li class="nav-item">
+                        <RouterLink to="/servicios" class="nav-link click-scroll"
+                          >Servicios</RouterLink
+                        >
+                      </li>
+                      <li class="nav-item">
+                        <RouterLink to="/ventas" class="nav-link click-scroll">Ventas</RouterLink>
+                      </li>
+                      <li class="nav-item">
+                        <RouterLink to="/mascotas" class="nav-link click-scroll">Mascotas</RouterLink>
+                      </li>
                     </ul>
                   </nav>
                 </div>
                 <div class="header-right-btn f-right d-none d-lg-block ml-30">
-                  <a href="#" class="header-btn">01654.066.456</a>
+                  <a href="#" class="header-btn">Usuario</a>
                 </div>
               </div>
             </div>
