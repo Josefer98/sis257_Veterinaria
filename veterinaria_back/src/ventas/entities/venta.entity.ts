@@ -23,7 +23,7 @@ export class Venta {
   @Column('date', { name: 'fecha', default:() => 'CURRENT_DATE' })
   fecha: Date;
 
-  @Column('integer', { name: 'total', default: 0 })
+  @Column('decimal', { name: 'total', precision: 10, scale: 2, default:0.00 })
   total: number;
 
   @CreateDateColumn({ name: 'fecha_creacion' })
