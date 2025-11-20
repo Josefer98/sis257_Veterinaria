@@ -136,3 +136,19 @@ El frontend es la interfaz de usuario de la aplicacion.
 | :--- | :--- | :--- | :--- |
 | **Backend** | /backend | `npm run start:dev` | `http://localhost:3000` |
 | **Frontend** | /frontend | `npm run dev` | `http://localhost:5173` |
+
+
+## 4. Configuracion Global del Archivo .env
+
+Esta es la configuracion completa que debe estar presente en el archivo `.env` para que el proyecto funcione correctamente.
+
+```env
+PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=bd_veterinaria
+DB_PASSWORD=123456
+DB_NAME=veterinaria_bd
+JWT_TOKEN=ALGUN_TOKEN_SECRETO
+JWT_EXPIRES_IN=1d
+DEFAULT_PASSWORD=123456
