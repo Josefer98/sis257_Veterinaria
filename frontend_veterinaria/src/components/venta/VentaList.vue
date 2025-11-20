@@ -147,10 +147,10 @@ table {
 th,
 td {
   padding: 10px;
-  border: 1px solid #057811;
+  border: 1px solid #783505;
 }
 
 th {
-  background: #11950c;
+  background: #95410c;
 }
 </style>
