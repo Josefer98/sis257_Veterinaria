@@ -192,140 +192,200 @@ function clienteGuardado(nuevoCliente: Cliente) {
   <div class="card flex justify-center">
     <Dialog
       v-model:visible="dialogVisible"
-      :header="props.modoEdicion ? 'Editar Venta' : 'Crear Venta'"
-      style="width: 40rem"
+      :header="props.modoEdicion ? 'Editar Venta' : 'Nueva Venta'"
+      style="width: 50rem"
+      :modal="true"
     >
-      <!-- CLIENTE -->
-      <div class="flex items-center gap-4 mb-4">
-        <label class="font-semibold w-3">Cliente</label>
-        <Select
-          v-model="venta.idCliente"
-          :options="clientes"
-          optionLabel="labelCliente"
-          optionValue="id"
-          placeholder="Seleccionar cliente"
-          class="flex-auto"
-          :filter="true"
-        />
-        <!-- Botón para abrir diálogo de nuevo cliente -->
-        <Button
-          icon="pi pi-plus"
-          label="Nuevo Cliente"
-          class="ml-2"
-          @click="clienteDialogVisible = true"
-        />
+      <!-- SECCIÓN: INFORMACIÓN DE VENTA -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="pi pi-user section-icon"></i>
+          <h4 class="section-title">Información de la Venta</h4>
+        </div>
+
+        <div class="section-content">
+          <!-- CLIENTE -->
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-user label-icon"></i>
+              Cliente
+            </label>
+            <div class="input-with-button">
+              <Select
+                v-model="venta.idCliente"
+                :options="clientes"
+                optionLabel="labelCliente"
+                optionValue="id"
+                placeholder="Seleccionar cliente"
+                class="flex-auto"
+                :filter="true"
+              />
+              <Button
+                icon="pi pi-plus"
+                label="Nuevo"
+                size="small"
+                severity="success"
+                @click="clienteDialogVisible = true"
+              />
+            </div>
+          </div>
+
+          <!-- FECHA -->
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-calendar label-icon"></i>
+              Fecha
+            </label>
+            <Calendar v-model="venta.fecha" class="flex-auto" dateFormat="dd/mm/yy" disabled />
+          </div>
+        </div>
       </div>
 
-      <!-- FECHA -->
-      <div class="flex items-center gap-4 mb-4">
-        <label class="font-semibold w-3">Fecha</label>
-        <Calendar v-model="venta.fecha" class="flex-auto" dateFormat="dd/mm/yy" disabled />
+      <!-- SECCIÓN: AGREGAR ITEMS -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="pi pi-shopping-cart section-icon"></i>
+          <h4 class="section-title">Agregar Items</h4>
+        </div>
+
+        <div class="section-content">
+          <!-- TIPO Y SELECCIÓN EN UNA FILA -->
+          <div class="form-row-inline">
+            <div class="form-group">
+              <label class="form-label-small">Tipo</label>
+              <Dropdown
+                v-model="nuevoItem.tipoItem"
+                :options="[
+                  { label: 'Producto', value: 'producto' },
+                  { label: 'Servicio', value: 'servicio' },
+                ]"
+                optionLabel="label"
+                optionValue="value"
+                class="w-full"
+              />
+            </div>
+
+            <!-- PRODUCTO -->
+            <div v-if="nuevoItem.tipoItem === 'producto'" class="form-group flex-grow">
+              <label class="form-label-small">Producto</label>
+              <Dropdown
+                v-model="nuevoItem.idProducto"
+                :options="productos"
+                optionLabel="nombre"
+                optionValue="id"
+                placeholder="Seleccionar producto"
+                class="w-full"
+              />
+            </div>
+
+            <!-- SERVICIO -->
+            <div v-if="nuevoItem.tipoItem === 'servicio'" class="form-group flex-grow">
+              <label class="form-label-small">Servicio</label>
+              <Dropdown
+                v-model="nuevoItem.idServicio"
+                :options="servicios"
+                optionLabel="nombre"
+                optionValue="id"
+                placeholder="Seleccionar servicio"
+                class="w-full"
+              />
+            </div>
+
+            <!-- CANTIDAD -->
+            <div class="form-group">
+              <label class="form-label-small">Cantidad</label>
+              <InputNumber v-model="nuevoItem.cantidad" :min="1" class="w-full" />
+            </div>
+
+            <!-- BOTÓN AGREGAR -->
+            <div class="form-group align-end">
+              <Button label="Agregar" icon="pi pi-plus" @click="agregarItem" class="add-button" />
+            </div>
+          </div>
+        </div>
       </div>
 
-      <hr class="my-3" />
+      <!-- SECCIÓN: ITEMS AGREGADOS -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="pi pi-list section-icon"></i>
+          <h4 class="section-title">Items Agregados</h4>
+        </div>
 
-      <h3 class="text-lg font-bold mb-3 text-white">Agregar Detalle</h3>
+        <div class="table-container">
+          <table class="elegant-table">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, i) in items" :key="i">
+                <td>
+                  <span
+                    class="badge"
+                    :class="item.tipoItem === 'producto' ? 'badge-product' : 'badge-service'"
+                  >
+                    {{ item.tipoItem === 'producto' ? 'Producto' : 'Servicio' }}
+                  </span>
+                </td>
+                <td class="item-name">
+                  {{
+                    item.tipoItem === 'producto'
+                      ? productos.find((p) => p.id === item.idProducto)?.nombre
+                      : servicios.find((s) => s.id === item.idServicio)?.nombre
+                  }}
+                </td>
+                <td class="text-center">
+                  <span class="quantity-badge">{{ item.cantidad }}</span>
+                </td>
+                <td class="text-center">
+                  <Button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    text
+                    rounded
+                    @click="eliminarItem(i)"
+                  />
+                </td>
+              </tr>
 
-      <!-- TIPO -->
-      <div class="flex items-center gap-4 mb-4">
-        <label class="w-3">Tipo</label>
-        <Dropdown
-          v-model="nuevoItem.tipoItem"
-          :options="[
-            { label: 'Producto', value: 'producto' },
-            { label: 'Servicio', value: 'servicio' },
-          ]"
-          optionLabel="label"
-          optionValue="value"
-        />
+              <tr v-if="items.length === 0">
+                <td colspan="4" class="empty-state">
+                  <i class="pi pi-inbox empty-icon"></i>
+                  <p>No hay items agregados</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TOTAL -->
+        <div class="total-section">
+          <label class="total-label">Total:</label>
+          <InputNumber
+            v-model="venta.total"
+            disabled
+            mode="currency"
+            currency="BOB"
+            locale="es-BO"
+            class="total-input"
+          />
+        </div>
       </div>
 
-      <!-- PRODUCTO -->
-      <div v-if="nuevoItem.tipoItem === 'producto'" class="flex items-center gap-4 mb-4">
-        <label class="w-3">Producto</label>
-        <Dropdown
-          v-model="nuevoItem.idProducto"
-          :options="productos"
-          optionLabel="nombre"
-          optionValue="id"
-          placeholder="Seleccionar producto"
-          class="flex-auto"
-        />
-      </div>
-
-      <!-- SERVICIO -->
-      <div v-if="nuevoItem.tipoItem === 'servicio'" class="flex items-center gap-4 mb-4">
-        <label class="w-3">Servicio</label>
-        <Dropdown
-          v-model="nuevoItem.idServicio"
-          :options="servicios"
-          optionLabel="nombre"
-          optionValue="id"
-          class="flex-auto"
-        />
-      </div>
-
-      <!-- CANTIDAD -->
-      <div class="flex items-center gap-4 mb-4">
-        <label class="w-3">Cantidad</label>
-        <InputNumber v-model="nuevoItem.cantidad" />
-      </div>
-
-      <Button label="Agregar" icon="pi pi-plus" @click="agregarItem" />
-
-      <hr class="my-4" />
-
-      <!-- TABLA DE ITEMS -->
-      <h3 class="text-lg font-bold text-white">Items Agregados</h3>
-
-      <table class="w-full mt-2">
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Item</th>
-            <th>Cant.</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, i) in items" :key="i">
-            <td>{{ item.tipoItem }}</td>
-
-            <td>
-              {{
-                item.tipoItem === 'producto'
-                  ? productos.find((p) => p.id === item.idProducto)?.nombre
-                  : servicios.find((s) => s.id === item.idServicio)?.nombre
-              }}
-            </td>
-
-            <td>{{ item.cantidad }}</td>
-
-            <td>
-              <Button icon="pi pi-trash" text @click="eliminarItem(i)" />
-            </td>
-          </tr>
-
-          <tr v-if="items.length === 0">
-            <td colspan="4" class="text-center">No hay items agregados</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- TOTAL -->
-      <div class="flex items-center gap-4 mt-4">
-        <label class="font-semibold w-3">Total</label>
-        <InputNumber v-model="venta.total" disabled class="flex-auto" />
-      </div>
-
-      <div class="flex justify-end gap-2 mt-4">
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="action-buttons">
         <Button
           label="Cancelar"
           icon="pi pi-times"
           severity="secondary"
           @click="dialogVisible = false"
         />
-        <Button label="Guardar" icon="pi pi-save" @click="handleSave" />
+        <Button label="Guardar Venta" icon="pi pi-save" @click="handleSave" />
       </div>
     </Dialog>
 
@@ -338,4 +398,276 @@ function clienteGuardado(nuevoCliente: Cliente) {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* ===== SECCIONES CON TARJETAS ===== */
+.section-card {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  color: white;
+  font-size: 18px;
+}
+
+.section-title {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.section-content {
+  padding: 20px;
+}
+
+/* ===== FORMULARIOS ===== */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.label-icon {
+  color: #ff6f61;
+  font-size: 16px;
+}
+
+.input-with-button {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+}
+
+/* ===== FORMULARIO EN LÍNEA (AGREGAR ITEMS) ===== */
+.form-row-inline {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.form-group.flex-grow {
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-group.align-end {
+  justify-content: flex-end;
+}
+
+.form-label-small {
+  font-weight: 600;
+  color: #555;
+  font-size: 13px;
+}
+
+.add-button {
+  width: 100%;
+  min-width: 120px;
+}
+
+/* ===== TABLA ELEGANTE ===== */
+.table-container {
+  padding: 0 20px 20px 20px;
+}
+
+.elegant-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.elegant-table thead {
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+}
+
+.elegant-table thead th {
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.elegant-table thead th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.elegant-table thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.elegant-table tbody tr {
+  background-color: white;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.elegant-table tbody tr:hover {
+  background-color: #fff5f3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(255, 111, 97, 0.1);
+}
+
+.elegant-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.elegant-table tbody td {
+  padding: 12px 16px;
+  color: #333;
+  font-size: 14px;
+}
+
+.elegant-table tbody td.text-center {
+  text-align: center;
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-product {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.badge-service {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.quantity-badge {
+  display: inline-block;
+  background-color: #fff3e0;
+  color: #e65100;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.item-name {
+  font-weight: 500;
+  color: #444;
+}
+
+/* ===== ESTADO VACÍO ===== */
+.empty-state {
+  text-align: center;
+  padding: 40px 24px !important;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 48px;
+  color: #ddd;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* ===== SECCIÓN TOTAL ===== */
+.total-section {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #fff5f3 0%, #ffe8e5 100%);
+  border-top: 2px solid #ff6f61;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.total-label {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff6f61;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.total-input {
+  min-width: 200px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .form-row-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  .section-card {
+    margin-bottom: 16px;
+  }
+}
+</style>

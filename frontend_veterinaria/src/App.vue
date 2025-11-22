@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 import MainHeader from './components/MainHeader.vue'
 import MainFooter from './components/MainFooter.vue'
+
+const route = useRoute()
+
+// Verificar si la ruta actual es login
+const isLoginPage = computed(() => route.path === '/login')
+
+// Verificar si la ruta actual es home
+const isHomePage = computed(() => route.path === '/')
+
+// Aplicar fondo rosa solo si NO es home ni login
+const shouldApplyBackground = computed(() => !isHomePage.value && !isLoginPage.value)
 </script>
 
 <template>
-  <main>
-    <MainHeader />
+  <main :class="{ 'custom-background': shouldApplyBackground }">
+    <MainHeader v-if="!isLoginPage" />
     <RouterView />
   </main>
-  <MainFooter />
+  <MainFooter v-if="!isLoginPage" />
 </template>
 
 <style>
@@ -25,4 +37,10 @@ import MainFooter from './components/MainFooter.vue'
 @import '@/assets/css/slick.css';
 @import '@/assets/css/nice-select.css';
 @import '@/assets/css/style.css';
+
+/* Color de fondo solo para vistas que no sean home ni login */
+main.custom-background {
+  background-color: #f7dad8 !important;
+  min-height: 100vh;
+}
 </style>

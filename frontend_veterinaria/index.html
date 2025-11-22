@@ -8,6 +8,41 @@
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetCare - Veterinaria</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <!-- MDB UI Kit CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+    />
+
+    <!-- MDB Core CSS -->
+    <link
+      rel="stylesheet"
+      href="https://mdbcdn.b-cdn.net/wp-content/themes/mdbootstrap4/docs-app/css/dist/mdb5/standard/core.min.css"
+    />
+
+    <!-- Roboto Font -->
+    <link
+      rel="stylesheet"
+      id="roboto-subset.css-css"
+      href="https://mdbcdn.b-cdn.net/wp-content/themes/mdbootstrap4/docs-app/css/mdb5/fonts/roboto-subset.css?ver=3.9.0-update.5"
+      type="text/css"
+      media="all"
+    />
   </head>
   <body>
     <div id="app"></div>
@@ -40,5 +75,26 @@
 
     <script src="/src/assets/js/plugins.js"></script>
     <script src="/src/assets/js/main.js"></script>
+
+    <!-- MDB UI Kit JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+
+    <!-- Bootstrap 5 Bundle -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- MDB Input Initialization -->
+    <script>
+      // Esperar a que el DOM esté completamente cargado
+      document.addEventListener('DOMContentLoaded', function () {
+        // Inicializar todos los inputs de MDB
+        document.querySelectorAll('[data-mdb-input-init]').forEach((inputElement) => {
+          new mdb.Input(inputElement)
+        })
+      })
+    </script>
   </body>
 </html>

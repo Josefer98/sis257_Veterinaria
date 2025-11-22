@@ -21,7 +21,7 @@ const location = useRoute()
               <div class="menu-main d-flex align-items-center justify-content-end">
                 <!-- Main-menu -->
                 <div class="main-menu f-right d-none d-lg-block">
-                  <nav >
+                  <nav>
                     <ul id="navigation">
                       <li class="nav-item">
                         <RouterLink to="/" class="nav-link click-scroll">home</RouterLink>
@@ -45,17 +45,27 @@ const location = useRoute()
                         <RouterLink to="/ventas" class="nav-link click-scroll">Ventas</RouterLink>
                       </li>
                       <li class="nav-item">
-                        <RouterLink to="/mascotas" class="nav-link click-scroll">Mascotas</RouterLink>
+                        <RouterLink to="/mascotas" class="nav-link click-scroll"
+                          >Mascotas</RouterLink
+                        >
                       </li>
                     </ul>
                   </nav>
                 </div>
                 <div class="header-right-btn f-right d-none d-lg-block ml-30">
-                  
-          <RouterLink v-if="!authStore.token" to="/login" class="btn custom-btn d-lg-block d-none"
-            >Iniciar Sesión</RouterLink
-          >
-          <a v-else @click="authStore.logout()" class="btn custom-btn d-lg-block d-none" style="color: beige;">Salir</a>
+                  <RouterLink
+                    v-if="!authStore.token"
+                    to="/login"
+                    class="btn custom-btn d-lg-block d-none"
+                    >Iniciar Sesión</RouterLink
+                  >
+                  <a
+                    v-else
+                    @click="authStore.logout()"
+                    class="btn custom-btn d-lg-block d-none"
+                    style="color: beige"
+                    >Salir</a
+                  >
                 </div>
               </div>
             </div>
@@ -70,3 +80,29 @@ const location = useRoute()
     <!-- Header End -->
   </header>
 </template>
+
+<style scoped>
+/* Estilo para el enlace activo */
+.router-link-active {
+  background-color: #ff6f61 !important;
+  color: white !important;
+  border-radius: 5px;
+  padding: 8px 15px !important;
+  font-weight: bold;
+}
+
+/* Estilo para hover en los enlaces */
+.nav-link:hover {
+  background-color: #ff8a7a;
+  color: white !important;
+  border-radius: 5px;
+  padding: 8px 15px;
+  transition: all 0.3s ease;
+}
+
+/* Asegurar que los enlaces tengan padding consistente */
+.nav-link {
+  padding: 8px 15px;
+  transition: all 0.3s ease;
+}
+</style>

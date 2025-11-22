@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useAuthStore } from '@/stores/index'
 
 const usuario = ref('')
@@ -10,61 +10,121 @@ function onSubmit() {
   const authStore = useAuthStore()
   authStore.login(usuario.value, clave.value).catch(() => (error.value = true))
 }
+
+// Inicializar MDB inputs después de montar el componente
+onMounted(() => {
+  nextTick(() => {
+    // Verificar si mdb está disponible
+    if (typeof (window as any).mdb !== 'undefined') {
+      const inputs = document.querySelectorAll('[data-mdb-input-init]')
+      inputs.forEach((input) => {
+        new (window as any).mdb.Input(input)
+      })
+    }
+  })
+})
 </script>
 
 <template>
-  <div class="my-5 pt-5">
-    <h1 class="text-center">Iniciar Sesión</h1>
-    <form class="form" @submit.prevent="onSubmit">
-      <label class="form-label">Usuario:</label>
-      <input v-model="usuario" type="text" class="form-input" placeholder="Usuario" autofocus />
+  <section class="vh-100" style="background-color: #f7dad8">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xl-10">
+          <div class="card" style="border-radius: 1rem">
+            <div class="row g-0">
+              <div class="col-md-6 col-lg-5 d-none d-md-block">
+                <img
+                  src="https://i.pinimg.com/736x/8a/2d/48/8a2d4821efd933f4d7e44d5ac3d85ac9.jpg"
+                  alt="login form"
+                  class="img-fluid"
+                  style="border-radius: 1rem 0 0 1rem"
+                />
+              </div>
+              <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                <div class="card-body p-4 p-lg-5 text-black">
+                  <form @submit.prevent="onSubmit">
+                    <div class="d-flex align-items-center mb-3 pb-1">
+                      <i class="fas fa-user-shield fa-2x me-3" style="color: #32e9d4"></i>
+                      <span class="h1 fw-bold mb-0">Admin Panel</span>
+                    </div>
 
-      <label class="form-label">Contraseña:</label>
-      <input v-model="clave" type="password" class="form-input" placeholder="Contraseña" />
+                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px">
+                      Acceso de Administrador
+                    </h5>
 
-      <p v-if="error" class="text-danger">Usuario y/o contraseña incorrectos</p>
-      <input type="submit" class="form-submit" value="Ingresar" />
-    </form>
-  </div>
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input
+                        v-model="usuario"
+                        type="text"
+                        id="form2Example17"
+                        class="form-control form-control-lg"
+                        autocomplete="off"
+                      />
+                      <label class="form-label" for="form2Example17">Usuario</label>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input
+                        v-model="clave"
+                        type="password"
+                        id="form2Example27"
+                        class="form-control form-control-lg"
+                        autocomplete="new-password"
+                      />
+                      <label class="form-label" for="form2Example27">Contraseña</label>
+                    </div>
+
+                    <!-- Mensaje de error -->
+                    <div v-if="error" class="alert alert-danger" role="alert">
+                      <i class="fas fa-exclamation-triangle me-2"></i>
+                      Usuario y/o contraseña incorrectos
+                    </div>
+
+                    <!-- Checkbox para recordar sesión -->
+                    <div class="form-check mb-4">
+                      <input class="form-check-input" type="checkbox" value="" id="rememberMe" />
+                      <label class="form-check-label" for="rememberMe">
+                        Mantener sesión iniciada
+                      </label>
+                    </div>
+
+                    <div class="pt-1 mb-4">
+                      <button
+                        data-mdb-button-init
+                        data-mdb-ripple-init
+                        class="btn btn-dark btn-lg btn-block active"
+                        type="submit"
+                        data-mdb-button-initialized="true"
+                      >
+                        Iniciar Sesión
+                      </button>
+                    </div>
+
+                    <a class="small text-muted" href="#!">¿Olvidaste tu contraseña?</a>
+                    <p class="mb-4 pb-lg-2" style="color: #393f81">
+                      ¿Problemas para acceder?
+                      <a href="mailto:soporte@tuempresa.com" style="color: #393f81"
+                        >Contacta a soporte técnico</a
+                      >
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                      <a href="#!" class="small text-muted">
+                        <i class="fas fa-book me-1"></i>Manual de administrador
+                      </a>
+                      <span class="small text-muted">
+                        <i class="fas fa-code-branch me-1"></i>v2.0.1
+                      </span>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
-<style>
-.form {
-  margin: 1.5rem auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 20%;
-  min-width: 350px;
-  max-width: 100%;
-  background: rgba(19, 35, 47, 0.9);
-  border-radius: 5px;
-  padding: 40px;
-  box-shadow: 0 4px 10px 4px rgb(241, 153, 52);
-}
-
-.form-label {
-  margin-top: 2rem;
-  color: white;
-  margin-bottom: 0.5rem;
-}
-
-.form-input {
-  padding: 10px 15px;
-  background: none;
-  background-image: none;
-  border: 1px solid white;
-  color: white;
-}
-
-.form-submit {
-  background: #ee5007;
-  border: none;
-  border-radius: 5rem;
-  color: white;
-  margin-top: 3rem;
-  padding: 1rem 0;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-</style>
+<style></style>

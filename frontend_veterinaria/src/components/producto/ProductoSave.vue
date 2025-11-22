@@ -57,70 +57,185 @@ async function handleSave() {
   <div class="card flex justify-center">
     <Dialog
       v-model:visible="dialogVisible"
-      :header="props.modoEdicion ? 'Editar' : 'Crear'"
-      style="width: 25rem"
+      :header="props.modoEdicion ? 'Editar Producto' : 'Nuevo Producto'"
+      style="width: 35rem"
+      :modal="true"
     >
-      <div class="flex items-center gap-4 mb-4">
-        <label for="nombre" class="font-semibold w-3">Nombre</label>
-        <InputText
-          id="nombre"
-          v-model="producto.nombre"
-          class="flex-auto"
-          autocomplete="off"
-          autofocus
-        />
+      <!-- SECCIÓN: INFORMACIÓN DEL PRODUCTO -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="pi pi-box section-icon"></i>
+          <h4 class="section-title">Información del Producto</h4>
+        </div>
+
+        <div class="section-content">
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-tag label-icon"></i>
+              Nombre
+            </label>
+            <InputText
+              v-model="producto.nombre"
+              class="flex-auto"
+              autocomplete="off"
+              autofocus
+              placeholder="Nombre del producto"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-list label-icon"></i>
+              Categoría
+            </label>
+            <InputText
+              v-model="producto.categoria"
+              class="flex-auto"
+              autocomplete="off"
+              placeholder="Ej: Alimentos, Accesorios"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-align-left label-icon"></i>
+              Descripción
+            </label>
+            <InputText
+              v-model="producto.descripcion"
+              class="flex-auto"
+              autocomplete="off"
+              placeholder="Descripción del producto"
+            />
+          </div>
+        </div>
       </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="categoria" class="font-semibold w-3">Categoria</label>
-        <InputText
-          id="categoria"
-          v-model="producto.categoria"
-          class="flex-auto"
-          autocomplete="off"
-        />
+
+      <!-- SECCIÓN: PRECIO Y STOCK -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="pi pi-dollar section-icon"></i>
+          <h4 class="section-title">Precio y Stock</h4>
+        </div>
+
+        <div class="section-content">
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-money-bill label-icon"></i>
+              Precio
+            </label>
+            <InputNumber
+              v-model="producto.precio"
+              class="flex-auto"
+              autocomplete="off"
+              mode="decimal"
+              :min-fraction-digits="2"
+              :max-fraction-digits="2"
+              placeholder="0.00"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-database label-icon"></i>
+              Stock
+            </label>
+            <InputNumber
+              v-model="producto.stock"
+              class="flex-auto"
+              autocomplete="off"
+              :min="0"
+              placeholder="Cantidad disponible"
+            />
+          </div>
+        </div>
       </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="descripcion" class="font-semibold w-3">Descripcion</label>
-        <InputText
-          id="descripcion"
-          v-model="producto.descripcion"
-          class="flex-auto"
-          autocomplete="off"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="precio" class="font-semibold w-3">Precio</label>
-        <InputNumber
-          id="precio"
-          v-model="producto.precio"
-          class="flex-auto"
-          autocomplete="off"
-          mode="decimal"
-          :min-fraction-digits="2"
-          :max-fraction-digits="2"      
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="stock" class="font-semibold w-3">Stock</label>
-        <InputNumber
-          id="stock"
-          v-model="producto.stock"
-          class="flex-auto"
-          autocomplete="off"
-        />
-      </div>
-      <div class="flex justify-end gap-2">
+
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="action-buttons">
         <Button
-          type="button"
           label="Cancelar"
           icon="pi pi-times"
           severity="secondary"
           @click="dialogVisible = false"
-        ></Button>
-        <Button type="button" label="Guardar" icon="pi pi-save" @click="handleSave"></Button>
+        />
+        <Button label="Guardar Producto" icon="pi pi-save" @click="handleSave" />
       </div>
     </Dialog>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* ===== SECCIONES CON TARJETAS ===== */
+.section-card {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  color: white;
+  font-size: 18px;
+}
+
+.section-title {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.section-content {
+  padding: 20px;
+}
+
+/* ===== FORMULARIOS ===== */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.label-icon {
+  color: #ff6f61;
+  font-size: 16px;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+</style>

@@ -56,12 +56,12 @@ defineExpose({ obtenerLista })
     <table class="styled-table">
       <thead>
         <tr>
-          <th>Nro.</th>
-          <th>Nombres</th>
-          <th>Apellidos</th>
-          <th>Telefono</th>
-          <th>Direccion</th>
-          <th>Acciones</th>
+          <th><i class="pi pi-hashtag"></i> Nro.</th>
+          <th><i class="pi pi-user"></i> Nombres</th>
+          <th><i class="pi pi-id-card"></i> Apellidos</th>
+          <th><i class="pi pi-phone"></i> Teléfono</th>
+          <th><i class="pi pi-map-marker"></i> Dirección</th>
+          <th><i class="pi pi-cog"></i> Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -106,90 +106,223 @@ defineExpose({ obtenerLista })
   </div>
 </template>
 <style scoped>
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.container {
+  padding: 20px;
+}
+
+/* ===== HEADER CON BÚSQUEDA ===== */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+}
+
+.header-section h2 {
+  color: white;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* ===== TABLA ELEGANTE ===== */
 .styled-table {
   width: 100%;
   margin-top: 20px;
   border-collapse: separate;
-  border-spacing: 0 8px; /* separa filas para efecto "tarjeta" */
-  font-size: 15px;
-  text-align: center;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.styled-table thead {
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
 }
 
 .styled-table thead th {
-  background: #f54927;
-  color: #fff;
-  padding: 12px;
-  border: none;
+  color: white;
+  padding: 16px 20px;
+  text-align: left;
   font-weight: 600;
-  text-align: center;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
   position: relative;
 }
 
-/* Agregamos divisiones verticales */
+.styled-table thead th i {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.styled-table thead th:first-child {
+  text-align: center;
+  width: 80px;
+}
+
+.styled-table thead th:last-child {
+  text-align: center;
+  width: 120px;
+}
+
+/* Divisiones verticales en el header */
 .styled-table thead th:not(:last-child)::after {
   content: '';
   position: absolute;
-  top: 12px;
+  top: 20%;
   right: 0;
-  height: calc(100% - 24px);
+  height: 60%;
   width: 1px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .styled-table tbody tr {
-  background: #f2bf5b;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-  transition: 0.2s ease;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
 }
 
 .styled-table tbody tr:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(to right, #fff5f3, #ffffff);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.15);
+}
+
+.styled-table tbody tr:last-child {
+  border-bottom: none;
 }
 
 .styled-table tbody td {
-  padding: 12px 14px;
+  padding: 16px 20px;
   border: none;
   color: #333;
+  text-align: left;
+  font-size: 14px;
+}
+
+.styled-table tbody td:first-child {
   text-align: center;
-  position: relative;
+  font-weight: 600;
+  color: #ff6f61;
+  font-size: 15px;
 }
 
-/* Divisiones verticales en filas */
-.styled-table tbody td:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  top: 12px;
-  right: 0;
-  height: calc(100% - 24px);
-  width: 1px;
-  background: rgba(0, 0, 0, 0.1);
+.styled-table tbody td:last-child {
+  text-align: center;
 }
 
-/* Redondear filas */
-.styled-table tbody tr td:first-child {
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+/* ===== BADGES Y ELEMENTOS ===== */
+.nombre-cell {
+  font-weight: 600;
+  color: #2c3e50;
 }
 
-.styled-table tbody tr td:last-child {
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+.telefono-cell {
+  color: #666;
+  font-family: 'Courier New', monospace;
 }
 
-/* Columna de acciones más ordenada */
+/* ===== BOTONES DE ACCIÓN ===== */
 .acciones {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 
-/* Fila sin datos */
+:deep(.p-button.p-button-text) {
+  transition: all 0.2s ease;
+}
+
+:deep(.p-button.p-button-text:hover) {
+  transform: scale(1.1);
+}
+
+:deep(.p-button-icon.pi-pencil) {
+  color: #3498db;
+}
+
+:deep(.p-button-icon.pi-trash) {
+  color: #e74c3c;
+}
+
+/* ===== ESTADO VACÍO ===== */
 .no-data {
   text-align: center;
-  background: #f6f6f6;
-  color: #555;
-  border-radius: 10px;
+  padding: 60px 20px !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #6c757d;
+  font-style: italic;
+  border-radius: 8px;
+}
+
+.no-data::before {
+  content: '📋';
+  display: block;
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+/* ===== BÚSQUEDA ===== */
+:deep(.p-inputgroup) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+:deep(.p-inputgroup-addon) {
+  background: white;
+  border: 2px solid #ffd4cc;
+  border-right: none;
+  color: #ff6f61;
+}
+
+:deep(.p-inputtext) {
+  border: 2px solid #ffd4cc;
+  border-left: none;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+:deep(.p-inputtext:focus) {
+  border-color: #ff6f61;
+  box-shadow: none;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.styled-table tbody tr {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .styled-table {
+    font-size: 12px;
+  }
+
+  .styled-table thead th,
+  .styled-table tbody td {
+    padding: 12px 10px;
+  }
 }
 </style>

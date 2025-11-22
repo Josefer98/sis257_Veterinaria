@@ -91,59 +91,186 @@ watch(
   <div class="card flex justify-center">
     <Dialog
       v-model:visible="dialogVisible"
-      :header="props.modoEdicion ? 'Editar' : 'Crear'"
-      style="width: 25rem"
+      :header="props.modoEdicion ? 'Editar Mascota' : 'Nueva Mascota'"
+      style="width: 35rem"
+      :modal="true"
     >
-      <div class="flex items-center gap-4 mb-4">
-        <label for="cliente" class="font-semibold w-3">Nombre del cliente</label>
-        <Select
-          id="cliente"
-          v-model="mascota.idCliente"
-          :options="clientes"
-          optionLabel="nombres"
-          optionValue="id"
-          class="flex-auto"
-          placeholder="Seleccionar nombre"
-          :filter="true"
-          @change="mascota.idCliente = Number(mascota.idCliente)"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="nombre" class="font-semibold w-3">Nombre de mascota</label>
-        <InputText id="nombre" v-model="mascota.nombre" class="flex-auto" autocomplete="off" />
+      <!-- SECCIÓN: PROPIETARIO -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="pi pi-user section-icon"></i>
+          <h4 class="section-title">Propietario</h4>
+        </div>
+
+        <div class="section-content">
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-user label-icon"></i>
+              Cliente
+            </label>
+            <Select
+              v-model="mascota.idCliente"
+              :options="clientes"
+              optionLabel="nombres"
+              optionValue="id"
+              class="flex-auto"
+              placeholder="Seleccionar cliente"
+              :filter="true"
+              @change="mascota.idCliente = Number(mascota.idCliente)"
+            />
+          </div>
+        </div>
       </div>
 
-      <div class="flex items-center gap-4 mb-4">
-        <label for="especie" class="font-semibold w-3">Especie</label>
-        <InputText
-          id="especie"
-          v-model="mascota.especie"
-          class="flex-auto"
-          autocomplete="off"
-          placeholder="Tipo de mascota"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="raza" class="font-semibold w-3">Raza</label>
-        <InputText id="raza" v-model="mascota.raza" class="flex-auto" autocomplete="off" />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="edad" class="font-semibold w-3">Edad</label>
-        <InputNumber id="edad" v-model="mascota.edad" class="flex-auto" autocomplete="off" />
+      <!-- SECCIÓN: INFORMACIÓN DE LA MASCOTA -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="pi pi-heart section-icon"></i>
+          <h4 class="section-title">Información de la Mascota</h4>
+        </div>
+
+        <div class="section-content">
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-tag label-icon"></i>
+              Nombre
+            </label>
+            <InputText
+              v-model="mascota.nombre"
+              class="flex-auto"
+              autocomplete="off"
+              placeholder="Nombre de la mascota"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-list label-icon"></i>
+              Especie
+            </label>
+            <InputText
+              v-model="mascota.especie"
+              class="flex-auto"
+              autocomplete="off"
+              placeholder="Ej: Perro, Gato"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-info-circle label-icon"></i>
+              Raza
+            </label>
+            <InputText
+              v-model="mascota.raza"
+              class="flex-auto"
+              autocomplete="off"
+              placeholder="Raza de la mascota"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-calendar label-icon"></i>
+              Edad
+            </label>
+            <InputNumber
+              v-model="mascota.edad"
+              class="flex-auto"
+              autocomplete="off"
+              :min="0"
+              suffix=" años"
+              placeholder="Edad"
+            />
+          </div>
+        </div>
       </div>
 
-      <div class="flex justify-end gap-2">
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="action-buttons">
         <Button
-          type="button"
           label="Cancelar"
           icon="pi pi-times"
           severity="secondary"
           @click="dialogVisible = false"
-        ></Button>
-        <Button type="button" label="Guardar" icon="pi pi-save" @click="handleSave"></Button>
+        />
+        <Button label="Guardar Mascota" icon="pi pi-save" @click="handleSave" />
       </div>
     </Dialog>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* ===== SECCIONES CON TARJETAS ===== */
+.section-card {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  color: white;
+  font-size: 18px;
+}
+
+.section-title {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.section-content {
+  padding: 20px;
+}
+
+/* ===== FORMULARIOS ===== */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.label-icon {
+  color: #ff6f61;
+  font-size: 16px;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+</style>
