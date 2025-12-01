@@ -1,40 +1,38 @@
 <script setup lang="ts">
-import type { Servicio } from '@/models/servicio'
+import type { TipoServicio } from '@/models/tipo-servicio'
 import http from '@/plugins/axios'
-import { Dialog, InputGroup, InputGroupAddon, InputText } from 'primevue'
-import Button from 'primevue/button'
+import { Button, Dialog, InputGroup, InputGroupAddon, InputText } from 'primevue'
 import { computed, onMounted, ref } from 'vue'
 
-const ENDPOINT = 'servicios'
-const servicios = ref<Servicio[]>([])
-const servicioDelete = ref<Servicio | null>(null)
+const ENDPOINT = 'tipo-servicios'
+const tipoServicios = ref<TipoServicio[]>([])
+const tipoServicioDelete = ref<TipoServicio | null>(null)
 const mostrarConfirmDialog = ref<boolean>(false)
 const busqueda = ref<string>('')
 const emit = defineEmits(['edit'])
 
-const serviciosFiltrados = computed(() => {
-  return servicios.value.filter(
-    (servicio) =>
-      servicio.nombre.toLowerCase().includes(busqueda.value.toLowerCase()) ||
-      servicio.descripcion.toLowerCase().includes(busqueda.value.toLowerCase()),
+const tipoServiciosFiltrados = computed(() => {
+  return tipoServicios.value.filter(
+    (tipoServicio) =>
+      tipoServicio.nombre.toLowerCase().includes(busqueda.value.toLowerCase())
   )
 })
 
 async function obtenerLista() {
-  servicios.value = await http.get(ENDPOINT).then((response) => response.data)
+  tipoServicios.value = await http.get(ENDPOINT).then((response) => response.data)
 }
 
-function emitirEdicion(servicio: Servicio) {
-  emit('edit', servicio)
+function emitirEdicion(tipoServicio: TipoServicio) {
+  emit('edit', tipoServicio)
 }
 
-function mostrarEliminarConfirm(servicio: Servicio) {
-  servicioDelete.value = servicio
+function mostrarEliminarConfirm(tipoServicio: TipoServicio) {
+  tipoServicioDelete.value = tipoServicio
   mostrarConfirmDialog.value = true
 }
 
 async function eliminar() {
-  await http.delete(`${ENDPOINT}/${servicioDelete.value?.id}`)
+  await http.delete(`${ENDPOINT}/${tipoServicioDelete.value?.id}`)
   obtenerLista()
   mostrarConfirmDialog.value = false
 }
@@ -50,7 +48,7 @@ defineExpose({ obtenerLista })
     <div class="col-7 pl-0 mt-3">
       <InputGroup>
         <InputGroupAddon><i class="pi pi-search"></i></InputGroupAddon>
-        <InputText v-model="busqueda" type="text" placeholder="Buscar por nombre o categoria" />
+        <InputText v-model="busqueda" type="text" placeholder="Buscar por nombre" />
       </InputGroup>
     </div>
 
@@ -58,32 +56,26 @@ defineExpose({ obtenerLista })
       <thead>
         <tr>
           <th><i class="pi pi-hashtag"></i> Nro.</th>
-          <th><i class="pi pi-list"></i> Tipo de Servicio</th>
-          <th><i class="pi pi-briefcase"></i> Nombre</th>
-          <th><i class="pi pi-align-left"></i> Descripción</th>
-          <th><i class="pi pi-dollar"></i> Precio</th>
+          <th><i class="pi pi-user"></i> Nombre</th>
           <th><i class="pi pi-cog"></i> Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(servicio, index) in serviciosFiltrados" :key="servicio.id">
+        <tr v-for="(tipoServicio, index) in tipoServiciosFiltrados" :key="tipoServicio.id">
           <td>{{ index + 1 }}</td>
-          <td>{{ servicio.tipoServicio.nombre }}</td>
-          <td>{{ servicio.nombre }}</td>
-          <td>{{ servicio.descripcion }}</td>
-          <td>{{ servicio.precio }}</td>
+          <td>{{ tipoServicio.nombre }}</td>
           <td>
-            <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(servicio)" />
+            <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(tipoServicio)" />
             <Button
               icon="pi pi-trash"
               aria-label="Eliminar"
               text
-              @click="mostrarEliminarConfirm(servicio)"
+              @click="mostrarEliminarConfirm(tipoServicio)"
             />
           </td>
         </tr>
-        <tr v-if="serviciosFiltrados.length === 0">
-          <td colspan="4">No se encontraron resultados.</td>
+        <tr v-if="tipoServiciosFiltrados.length === 0">
+          <td colspan="9">No se encontraron resultados.</td>
         </tr>
       </tbody>
     </table>
@@ -93,7 +85,7 @@ defineExpose({ obtenerLista })
       header="Confirmar Eliminación"
       :style="{ width: '25rem' }"
     >
-      <p>¿Estás seguro de que deseas eliminar el servicio {{ servicioDelete?.nombre }} ?</p>
+      <p>¿Estás seguro de que deseas eliminar el Tipo de Servicio {{ tipoServicioDelete?.nombre }} ?</p>
       <div class="flex justify-end gap-2">
         <Button
           type="button"
@@ -106,8 +98,31 @@ defineExpose({ obtenerLista })
     </Dialog>
   </div>
 </template>
-
 <style scoped>
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.container {
+  padding: 20px;
+}
+
+/* ===== HEADER CON BÚSQUEDA ===== */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(255, 111, 97, 0.2);
+}
+
+.header-section h2 {
+  color: white;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
 /* ===== TABLA ELEGANTE ===== */
 .styled-table {
   width: 100%;
@@ -151,6 +166,7 @@ defineExpose({ obtenerLista })
   width: 120px;
 }
 
+/* Divisiones verticales en el header */
 .styled-table thead th:not(:last-child)::after {
   content: '';
   position: absolute;
@@ -196,6 +212,17 @@ defineExpose({ obtenerLista })
   text-align: center;
 }
 
+/* ===== BADGES Y ELEMENTOS ===== */
+.nombre-cell {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.telefono-cell {
+  color: #666;
+  font-family: 'Courier New', monospace;
+}
+
 /* ===== BOTONES DE ACCIÓN ===== */
 .acciones {
   display: flex;
@@ -231,7 +258,7 @@ defineExpose({ obtenerLista })
 }
 
 .no-data::before {
-  content: '💼';
+  content: '📋';
   display: block;
   font-size: 48px;
   margin-bottom: 12px;
@@ -278,5 +305,17 @@ defineExpose({ obtenerLista })
 
 .styled-table tbody tr {
   animation: fadeIn 0.3s ease;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .styled-table {
+    font-size: 12px;
+  }
+
+  .styled-table thead th,
+  .styled-table tbody td {
+    padding: 12px 10px;
+  }
 }
 </style>

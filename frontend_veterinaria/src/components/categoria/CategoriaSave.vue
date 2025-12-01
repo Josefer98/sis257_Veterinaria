@@ -1,127 +1,123 @@
 <script setup lang="ts">
-import type { Cliente } from '@/models/cliente'
-import type { Mascota } from '@/models/mascota'
+
 import http from '@/plugins/axios'
 import { Button, Dialog, InputNumber, InputText } from 'primevue'
 import { computed, ref, watch } from 'vue'
-import MascotaSave from '@/components/mascota/MascotaSave.vue'
 
-const ENDPOINT = 'clientes'
+import type { Categoria } from '@/models/categoria'
+import type { Producto } from '@/models/producto'
+import ProductoSave from '../producto/ProductoSave.vue'
+
+const ENDPOINT = 'categorias'
 const props = defineProps({
   mostrar: Boolean,
-  cliente: {
-    type: Object as () => Cliente,
-    default: () => ({}) as Cliente,
+  categoria: {
+    type: Object as () => Categoria,
+    default: () => ({}) as Categoria,
   },
   modoEdicion: Boolean,
 })
 const emit = defineEmits(['guardar', 'close'])
 
-const clientes = ref<Cliente[]>([])
+const categorias = ref<Categoria[]>([])
 
 // Estado para el diálogo de mascota
-const mostrarDialogoMascota = ref(false)
-const clienteGuardado = ref<Cliente | null>(null)
-const mascotaParaRegistrar = ref<Mascota>({} as Mascota)
+const mostrarDialogoProducto = ref(false)
+const categoriaGuardado = ref<Categoria | null>(null)
+const productoParaRegistrar = ref<Producto>({} as Producto)
 
 const dialogVisible = computed({
   get: () => props.mostrar,
   set: (value) => {
     if (!value) {
       emit('close')
-      clienteGuardado.value = null
-      mascotaParaRegistrar.value = {} as Mascota
+      categoriaGuardado.value = null
+      productoParaRegistrar.value = {} as Producto
     }
   },
 })
 
-const cliente = ref<Cliente>({ ...props.cliente })
+const categoria = ref<Categoria>({ ...props.categoria })
 watch(
-  () => props.cliente,
+  () => props.categoria,
   (newVal) => {
-    cliente.value = { ...newVal }
+    categoria.value = { ...newVal }
   },
 )
 
 async function handleSave() {
   try {
     const body = {
-      nombres: cliente.value.nombres,
-      apellidos: cliente.value.apellidos,
-      telefono: cliente.value.telefono || undefined,
-      direccion: cliente.value.direccion || undefined,
+      nombre: categoria.value.nombre,
     }
 
-    let clienteId = cliente.value.id
+    let categoriaId = categoria.value.id
 
     if (props.modoEdicion) {
-      await http.patch(`${ENDPOINT}/${cliente.value.id}`, body)
+      await http.patch(`${ENDPOINT}/${categoria.value.id}`, body)
     } else {
       const response = await http.post(ENDPOINT, body)
-      clienteId = response.data.id
+      categoriaId = response.data.id
     }
 
     emit('guardar')
-    cliente.value = {} as Cliente
+    categoria.value = {} as Categoria
     dialogVisible.value = false
   } catch (error: any) {
-    alert(error?.response?.data?.message || 'Error al guardar el cliente')
+    alert(error?.response?.data?.message || 'Error al guardar La categoria')
   }
 }
 
 // Función para abrir el diálogo de mascota (guarda el cliente primero)
-async function abrirDialogoMascota() {
-  if (!cliente.value.nombres || !cliente.value.apellidos) {
-    alert('Por favor complete primero la información del cliente antes de agregar mascotas')
+async function abrirDialogoProducto() {
+  if (!categoria.value.nombre) {
+    alert('Por favor complete primero la información de la categoria antes de agregar productos')
     return
   }
   
   try {
     // Guardar el cliente con la información del formulario
     const body = {
-      nombres: cliente.value.nombres,
-      apellidos: cliente.value.apellidos,
-      telefono: cliente.value.telefono || undefined,
-      direccion: cliente.value.direccion || undefined,
+      nombre: categoria.value.nombre,
     }
 
-    let clienteId: number
-    let clienteCompleto: Cliente
+    let categoriaId: number
+    let categoriaCompleto: Categoria
 
     if (props.modoEdicion) {
-      await http.patch(`${ENDPOINT}/${cliente.value.id}`, body)
-      clienteId = cliente.value.id
-      clienteCompleto = { ...cliente.value, ...body }
+      await http.patch(`${ENDPOINT}/${categoria.value.id}`, body)
+      categoriaId = categoria.value.id
+      categoriaCompleto = { ...categoria.value, ...body }
     } else {
       const response = await http.post(ENDPOINT, body)
-      clienteId = response.data.id
-      clienteCompleto = { id: clienteId, ...body }
+      categoriaId = response.data.id
+      categoriaCompleto = { id: categoriaId, ...body }
     }
 
     // Guardar el cliente completo
-    clienteGuardado.value = clienteCompleto
+    categoriaGuardado.value = categoriaCompleto
     
     // Crear objeto mascota con el cliente pre-seleccionado
-    mascotaParaRegistrar.value = {
-      idCliente: clienteId,
-      clientes: clienteCompleto,
-    } as Mascota
+    productoParaRegistrar.value = {
+      idCategoria: categoriaId,
+      categoria: categoriaCompleto,
+    } as Producto
     
     // Abrir el diálogo de mascota
-    mostrarDialogoMascota.value = true
+    mostrarDialogoProducto.value = true
   } catch (error: any) {
-    alert(error?.response?.data?.message || 'Error al guardar el cliente')
+    alert(error?.response?.data?.message || 'Error al guardar el categoria')
   }
 }
 
-// Cuando se guarda una mascota, cerrar ambos diálogos
+// Cuando se guarda un produto, cerrar ambos diálogos
 function handleMascotaGuardada() {
-  mostrarDialogoMascota.value = false
+  mostrarDialogoProducto.value = false
   // Emitir evento de guardado y cerrar el diálogo de cliente
   emit('guardar')
-  cliente.value = {} as Cliente
-  clienteGuardado.value = null
-  mascotaParaRegistrar.value = {} as Mascota
+  categoria.value = {} as Categoria
+  categoriaGuardado.value = null
+  productoParaRegistrar.value = {} as Producto
   dialogVisible.value = false
 }
 </script>
@@ -130,7 +126,7 @@ function handleMascotaGuardada() {
   <div class="card flex justify-center">
     <Dialog
       v-model:visible="dialogVisible"
-      :header="props.modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente'"
+      :header="props.modoEdicion ? 'Editar Categoria' : 'Nueva Categoria'"
       style="width: 35rem"
       :modal="true"
     >
@@ -138,79 +134,26 @@ function handleMascotaGuardada() {
       <div class="section-card">
         <div class="section-header">
           <i class="pi pi-user section-icon"></i>
-          <h4 class="section-title">Información Personal</h4>
+          <h4 class="section-title">Información de Categoria</h4>
         </div>
 
         <div class="section-content">
           <div class="form-row">
             <label class="form-label">
               <i class="pi pi-id-card label-icon"></i>
-              Nombres
+              Nombre de categoria
             </label>
             <InputText
-              v-model="cliente.nombres"
+              v-model="categoria.nombre"
               class="flex-auto"
               autocomplete="off"
               maxlength="40"
               autofocus
-              placeholder="Ingrese los nombres"
-            />
-          </div>
-
-          <div class="form-row">
-            <label class="form-label">
-              <i class="pi pi-id-card label-icon"></i>
-              Apellidos
-            </label>
-            <InputText
-              v-model="cliente.apellidos"
-              class="flex-auto"
-              autocomplete="off"
-              maxlength="100"
-              placeholder="Ingrese los apellidos"
+              placeholder="Ingrese los nombre"
             />
           </div>
         </div>
       </div>
-
-      <!-- SECCIÓN: INFORMACIÓN DE CONTACTO -->
-      <div class="section-card">
-        <div class="section-header">
-          <i class="pi pi-phone section-icon"></i>
-          <h4 class="section-title">Información de Contacto</h4>
-        </div>
-
-        <div class="section-content">
-          <div class="form-row">
-            <label class="form-label">
-              <i class="pi pi-phone label-icon"></i>
-              Teléfono
-            </label>
-            <InputText
-              v-model="cliente.telefono"
-              class="flex-auto"
-              autocomplete="off"
-              maxlength="40"
-              placeholder="Ej: 70123456"
-            />
-          </div>
-
-          <div class="form-row">
-            <label class="form-label">
-              <i class="pi pi-map-marker label-icon"></i>
-              Dirección
-            </label>
-            <InputText
-              v-model="cliente.direccion"
-              class="flex-auto"
-              autocomplete="off"
-              maxlength="40"
-              placeholder="Ingrese la dirección"
-            />
-          </div>
-        </div>
-      </div>
-
       <!-- BOTONES DE ACCIÓN -->
       <div class="action-buttons">
         <Button
@@ -220,22 +163,22 @@ function handleMascotaGuardada() {
           @click="dialogVisible = false"
         />
         <Button
-          label="Registrar Mascota"
+          label="Registrar Producto"
           icon="pi pi-heart"
           severity="success"
-          @click="abrirDialogoMascota"
+          @click="abrirDialogoProducto"
         />
-        <Button label="Guardar Cliente" icon="pi pi-save" @click="handleSave" />
+        <Button label="Guardar categoria" icon="pi pi-save" @click="handleSave" />
       </div>
     </Dialog>
 
     <!-- Diálogo de Mascota -->
-    <MascotaSave
-      :mostrar="mostrarDialogoMascota"
-      :producto="mascotaParaRegistrar"
+    <ProductoSave
+      :mostrar="mostrarDialogoProducto"
+      :producto="productoParaRegistrar"
       :modoEdicion="false"
       @guardar="handleMascotaGuardada"
-      @close="mostrarDialogoMascota = false"
+      @close="mostrarDialogoProducto = false"
     />
   </div>
 </template>

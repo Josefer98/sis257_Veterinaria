@@ -26,7 +26,16 @@ export class ServiciosService {
   }
 
   async findAll(): Promise<Servicio[]> {
-    return this.serviciosRepository.find();
+    return this.serviciosRepository.find({
+      relations: { tipoServicio: true },
+      select:{
+        id:true,
+        nombre:true,
+        descripcion:true,
+        precio:true,
+        tipoServicio:{id:true, nombre:true}
+      }
+    });
   }
 
   async findOne(id: number): Promise<Servicio> {

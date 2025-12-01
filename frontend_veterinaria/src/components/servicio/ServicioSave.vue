@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Servicio } from '@/models/servicio'
+import type { TipoServicio } from '@/models/tipo-servicio'
 import http from '@/plugins/axios'
-import { Button, Dialog, InputNumber, InputText, Textarea } from 'primevue'
+import { Button, Dialog, InputNumber, InputText, Select, Textarea } from 'primevue'
 import { computed, ref, watch } from 'vue'
 
 const ENDPOINT = 'servicios'
@@ -15,6 +16,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['guardar', 'close'])
 
+const tipoServicios = ref<TipoServicio[]>([])
+
 const dialogVisible = computed({
   get: () => props.mostrar,
   set: (value) => {
@@ -27,15 +30,20 @@ watch(
   () => props.servicio,
   (newVal) => {
     servicio.value = { ...newVal }
+    servicio.value.idTipoServicio = newVal?.tipoServicio?.id
   },
 )
+
+async function obtenerTipoServicios() {
+  tipoServicios.value = await http.get('tipo-servicios').then((response) => response.data)
+}
 
 async function handleSave() {
   try {
     const body = {
+      idTipoServicio: servicio.value.idTipoServicio,
       nombre: servicio.value.nombre,
       descripcion: servicio.value.descripcion,
-      tipoServicio: servicio.value.tipoServicio,
       precio: servicio.value.precio,
     }
     if (props.modoEdicion) {
@@ -50,6 +58,21 @@ async function handleSave() {
     alert(error?.response?.data?.message)
   }
 }
+
+watch(
+  () => props.mostrar,
+  (nuevoValor) => {
+    if (nuevoValor) {
+      obtenerTipoServicios()
+      if (props.servicio?.id) {
+        servicio.value = { ...props.servicio }
+        servicio.value.idTipoServicio = props.servicio.tipoServicio?.id
+      } else {
+        servicio.value = {} as Servicio
+      }
+    }
+  },
+)
 </script>
 
 <template>
@@ -100,11 +123,15 @@ async function handleSave() {
               <i class="pi pi-list label-icon"></i>
               Tipo de Servicio
             </label>
-            <InputText
-              v-model="servicio.tipoServicio"
+            <Select
+              v-model="servicio.idTipoServicio"
+              :options="tipoServicios"
+              optionLabel="nombre"
+              optionValue="id"
               class="flex-auto"
-              autocomplete="off"
-              placeholder="Ej: Consulta, Vacunación"
+              placeholder="Seleccionar tipo de servicio"
+              :filter="true"
+              @change="servicio.idTipoServicio = Number(servicio.idTipoServicio)"
             />
           </div>
         </div>

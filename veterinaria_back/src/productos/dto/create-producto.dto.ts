@@ -23,17 +23,6 @@ export class CreateProductoDto {
   readonly nombre: string;
 
   @ApiProperty()
-  @IsNotEmpty({ message: 'El campo categoría no debe estar vacío' })
-  @IsString({ message: 'El campo categoría debe ser una cadena de texto' })
-  @MaxLength(100, {
-    message: 'El campo categoría no debe exceder los 100 caracteres',
-  })
-  @Transform(({ value }): string | undefined =>
-    typeof value === 'string' ? value.trim() : value,
-  )
-  readonly categoria: string;
-
-  @ApiProperty()
   @IsNotEmpty({ message: 'El campo descripción no debe estar vacío' })
   @IsString({ message: 'El campo descripción debe ser una cadena de texto' })
   @MaxLength(555, {
@@ -53,7 +42,9 @@ export class CreateProductoDto {
   })
   @IsNumber(
     { maxDecimalPlaces: 2 },
-    { message: 'El precio debe ser un numero decimal con maximo dos decimales' },
+    {
+      message: 'El precio debe ser un numero decimal con maximo dos decimales',
+    },
   )
   readonly precio: number;
 

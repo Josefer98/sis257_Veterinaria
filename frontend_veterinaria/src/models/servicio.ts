@@ -1,7 +1,12 @@
+import type { TipoServicio } from "./tipo-servicio"
+
+
 export interface Servicio {
     id: number
+    idTipoServicio: number
     nombre: string
     descripcion: string
-    tipoServicio: string
     precio: number
+
+    tipoServicio: TipoServicio
 }

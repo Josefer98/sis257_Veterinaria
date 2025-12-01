@@ -18,7 +18,7 @@ import { computed, ref, watch } from 'vue'
 const ENDPOINT = 'mascotas'
 const props = defineProps({
   mostrar: Boolean,
-  mascota: {
+  producto: {
     type: Object as () => Mascota,
     default: () => ({}) as Mascota,
   },

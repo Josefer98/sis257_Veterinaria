@@ -24,7 +24,17 @@ export class ProductosService {
   }
 
   async findAll(): Promise<Producto[]> {
-    return this.productosRepository.find();
+    return this.productosRepository.find({
+      relations: { categoria: true },
+      select:{
+        id:true,
+        nombre:true,
+        descripcion:true,
+        precio:true,
+        stock:true,
+        categoria:{id:true, nombre:true}
+      }
+    });
   }
 
   async findOne(id: number): Promise<Producto> {

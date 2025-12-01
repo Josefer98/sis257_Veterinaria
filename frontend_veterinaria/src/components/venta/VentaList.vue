@@ -56,6 +56,19 @@ onMounted(() => {
   obtenerLista()
 })
 defineExpose({ obtenerLista })
+
+const ventaDetalle = ref<Venta | null>(null)
+const mostrarDetalleDialog = ref(false)
+const detalles = ref<any[]>([])
+
+async function verDetalle(venta: Venta) {
+  ventaDetalle.value = venta
+
+  // Obtener los detalles desde el backend
+  detalles.value = await http.get(`detalle-ventas/venta/${venta.id}`).then((res) => res.data)
+
+  mostrarDetalleDialog.value = true
+}
 </script>
 
 <template>
@@ -72,6 +85,7 @@ defineExpose({ obtenerLista })
         <tr>
           <th><i class="pi pi-hashtag"></i> Nro.</th>
           <th><i class="pi pi-user"></i> Cliente</th>
+          <th><i class="pi pi-user"></i> Detalle De Venta</th>
           <th><i class="pi pi-calendar"></i> Fecha</th>
           <th><i class="pi pi-money-bill"></i> Total</th>
         </tr>
@@ -81,6 +95,14 @@ defineExpose({ obtenerLista })
         <tr v-for="(venta, index) in ventasFiltrados" :key="venta.id">
           <td>{{ index + 1 }}</td>
           <td>{{ venta.cliente?.nombres }} {{ venta.cliente?.apellidos }}</td>
+          <td>
+            <Button
+              label="ver detalle"
+              icon="pi pi-eye"
+              severity="info"
+              @click="verDetalle(venta)"
+            />
+          </td>
           <td>{{ formatearFecha(venta.fecha) }}</td>
           <td>{{ venta.total }} BS</td>
         </tr>
@@ -111,6 +133,62 @@ defineExpose({ obtenerLista })
           @click="mostrarConfirmDialog = false"
         />
         <Button type="button" label="Eliminar" @click="eliminar" />
+      </div>
+    </Dialog>
+
+    <Dialog
+      v-model:visible="mostrarDetalleDialog"
+      header="Detalle de la Venta"
+      :style="{ width: '45rem', color: '#27ae60' }"
+    >
+      <div v-if="ventaDetalle">
+        <p style="color: white">
+          <b style="color: #ff6f61">Cliente:</b> {{ ventaDetalle.cliente?.nombres }}
+          {{ ventaDetalle.cliente?.apellidos }}
+        </p>
+        <p style="color: white">
+          <b style="color: #ff6f61">Fecha:</b> {{ formatearFecha(ventaDetalle.fecha) }}
+        </p>
+        <p style="color: white"><b style="color: #ff6f61">Total:</b> {{ ventaDetalle.total }} Bs</p>
+
+        <h4 class="mt-3" style="color: #27ae60">Items de la venta</h4>
+
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Cant.</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="item in detalles" :key="item.id">
+              <!-- Tipo item -->
+              <td>
+                {{ item.idProducto ? 'producto' : 'servicio' }}
+              </td>
+              <td>
+                <span v-if="item.tipoItem === 'producto' && item.producto">
+                  {{ item.producto.nombre }}
+                </span>
+
+                <span v-else-if="item.tipoItem === 'servicio' && item.servicio">
+                  {{ item.servicio.nombre }}
+                </span>
+
+                <span v-else> Desconocido </span>
+              </td>
+              <td>{{ item.cantidad }}</td>
+              <td>{{ item.precioUnitario }} Bs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-end mt-3">
+        <Button label="Cerrar" @click="mostrarDetalleDialog = false" />
       </div>
     </Dialog>
   </div>

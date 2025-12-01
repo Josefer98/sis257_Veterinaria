@@ -16,7 +16,7 @@ const productosFiltrados = computed(() => {
   return productos.value.filter(
     (producto) =>
       producto.nombre.toLowerCase().includes(busqueda.value.toLowerCase()) ||
-      producto.categoria.toLowerCase().includes(busqueda.value.toLowerCase()),
+      producto.descripcion.toLowerCase().includes(busqueda.value.toLowerCase()),
   )
 })
 
@@ -70,7 +70,7 @@ defineExpose({ obtenerLista })
         <tr v-for="(producto, index) in productosFiltrados" :key="producto.id">
           <td>{{ index + 1 }}</td>
           <td>{{ producto.nombre }}</td>
-          <td>{{ producto.categoria }}</td>
+          <td>{{ producto.categoria.nombre }}</td>
           <td>{{ producto.descripcion }}</td>
           <td>{{ producto.precio }}</td>
           <td>{{ producto.stock }}</td>

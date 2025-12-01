@@ -226,7 +226,7 @@ function clienteGuardado(nuevoCliente: Cliente) {
     <Dialog
       v-model:visible="dialogVisible"
       :header="props.modoEdicion ? 'Editar Venta' : 'Nueva Venta'"
-      style="width: 50rem"
+      style="width: 85rem"
       :modal="true"
     >
       <!-- SECCIÓN: INFORMACIÓN DE VENTA -->

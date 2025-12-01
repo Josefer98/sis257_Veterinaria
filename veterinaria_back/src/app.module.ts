@@ -11,6 +11,8 @@ import { MascotasModule } from './mascotas/mascotas.module';
 import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
+import { CategoriasModule } from './categorias/categorias.module';
+import { TipoServiciosModule } from './tipo-servicios/tipo-servicios.module';
 
 @Module({
   imports: [
@@ -33,7 +35,9 @@ import { AuthModule } from './auth/auth.module';
     MascotasModule,
     DetalleVentasModule,
     UsuariosModule,
-    AuthModule
+    AuthModule,
+    CategoriasModule,
+    TipoServiciosModule
   ],
   controllers: [AppController],
   providers: [AppService],

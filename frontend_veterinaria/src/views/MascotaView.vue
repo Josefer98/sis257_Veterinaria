@@ -34,7 +34,7 @@ function handleGuardar() {
     <MascotaList ref="mascotaListRef" @edit="handleEdit" />
     <MascotaSave
       :mostrar="mostrarDialog"
-      :mascota="mascotaEdit"
+      :producto="mascotaEdit"
       :modoEdicion="!!mascotaEdit"
       @guardar="handleGuardar"
       @close="handleCloseDialog"

@@ -40,11 +40,21 @@ const router = createRouter({
       component: () => import('../views/ServicioView.vue'),
     },
     {
+      path: '/tipo-servicios',
+      name: 'tipo-servicios',
+      component: () => import('../views/TipoServicioView.vue'),
+    },
+    {
+      path: '/categorias',
+      name: 'categorias',
+      component: () => import('../views/CategoriaView.vue'),
+    },
+    {
       path: '/mascotas',
       name: 'mascotas',
       component: () => import('../views/MascotaView.vue'),
     },
-        {
+    {
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue'),
@@ -62,6 +72,5 @@ router.beforeEach(async (to) => {
     return '/login'
   }
 })
-
 
 export default router

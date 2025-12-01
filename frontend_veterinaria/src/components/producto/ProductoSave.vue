@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { Categoria } from '@/models/categoria'
 import type { Producto } from '@/models/producto'
 import http from '@/plugins/axios'
-import { Button, Dialog, InputNumber, InputText, Textarea } from 'primevue'
+import { Button, Dialog, InputNumber, InputText, Select, Textarea } from 'primevue'
 import { computed, ref, watch } from 'vue'
 
 const ENDPOINT = 'productos'
@@ -15,6 +16,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['guardar', 'close'])
 
+const categorias = ref<Categoria[]>([])
+
 const dialogVisible = computed({
   get: () => props.mostrar,
   set: (value) => {
@@ -27,12 +30,18 @@ watch(
   () => props.producto,
   (newVal) => {
     producto.value = { ...newVal }
+    producto.value.idCategoria = newVal?.categoria?.id
   },
 )
+
+async function obtenerCategorias() {
+  categorias.value = await http.get('categorias').then((response) => response.data)
+}
 
 async function handleSave() {
   try {
     const body = {
+      idCategoria: producto.value.idCategoria,
       nombre: producto.value.nombre,
       categoria: producto.value.categoria,
       descripcion: producto.value.descripcion,
@@ -51,6 +60,22 @@ async function handleSave() {
     alert(error?.response?.data?.message)
   }
 }
+
+watch(
+  () => props.mostrar,
+  (nuevoValor) => {
+    if (nuevoValor) {
+      obtenerCategorias()
+
+      if (props.producto?.id) {
+        producto.value = { ...props.producto }
+        producto.value.idCategoria = props.producto.categoria?.id
+      } else {
+        producto.value = {} as Producto
+      }
+    }
+  },
+)
 </script>
 
 <template>
@@ -88,11 +113,15 @@ async function handleSave() {
               <i class="pi pi-list label-icon"></i>
               Categoría
             </label>
-            <InputText
-              v-model="producto.categoria"
+            <Select
+              v-model="producto.idCategoria"
+              :options="categorias"
+              optionLabel="nombre"
+              optionValue="id"
               class="flex-auto"
-              autocomplete="off"
-              placeholder="Ej: Alimentos, Accesorios"
+              placeholder="Seleccionar categoria"
+              :filter="true"
+              @change="producto.idCategoria = Number(producto.idCategoria)"
             />
           </div>
 

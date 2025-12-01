@@ -1,17 +1,28 @@
-
+import { Categoria } from 'src/categorias/entities/categoria.entity';
 import { DetalleVenta } from 'src/detalle-ventas/entities/detalle-venta.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('productos')
 export class Producto {
   @PrimaryGeneratedColumn('identity')
   id: number;
 
+  @Column('integer', { name: 'id_categoria' })
+  idCategoria: number;
+
   @Column('varchar', { name: 'nombre', length: 100 })
   nombre: string;
-
-  @Column('varchar', { name: 'categoria', length: 100 })
-  categoria: string;
 
   @Column('varchar', { name: 'descripcion', length: 555 })
   descripcion: string;
@@ -33,4 +44,8 @@ export class Producto {
 
   @OneToMany(() => DetalleVenta, (detalleVenta) => detalleVenta.producto)
   detalleVentas: DetalleVenta[];
+
+  @ManyToOne(()=> Categoria, (categoria)=> categoria.productos)
+  @JoinColumn({name: 'id_categoria', referencedColumnName: 'id'})
+  categoria: Categoria;
 }
