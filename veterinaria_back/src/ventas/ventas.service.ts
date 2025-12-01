@@ -28,6 +28,7 @@ export class VentasService {
     return await this.dataSource.transaction(async (manager)=>{
       const venta = manager.create(Venta, {
         idCliente: createVentaDto.idCliente,
+        idMascota: createVentaDto.idMascota,
         fecha: new Date(),
         total: 0,
       });

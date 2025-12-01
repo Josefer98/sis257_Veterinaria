@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Cliente } from '@/models/cliente'
+import type { Mascota } from '@/models/mascota'
 import http from '@/plugins/axios'
 import { Button, Dialog, InputNumber, InputText } from 'primevue'
 import { computed, ref, watch } from 'vue'
+import MascotaSave from '@/components/mascota/MascotaSave.vue'
 
 const ENDPOINT = 'clientes'
 const props = defineProps({
@@ -17,10 +19,19 @@ const emit = defineEmits(['guardar', 'close'])
 
 const clientes = ref<Cliente[]>([])
 
+// Estado para el diálogo de mascota
+const mostrarDialogoMascota = ref(false)
+const clienteGuardado = ref<Cliente | null>(null)
+const mascotaParaRegistrar = ref<Mascota>({} as Mascota)
+
 const dialogVisible = computed({
   get: () => props.mostrar,
   set: (value) => {
-    if (!value) emit('close')
+    if (!value) {
+      emit('close')
+      clienteGuardado.value = null
+      mascotaParaRegistrar.value = {} as Mascota
+    }
   },
 })
 
@@ -37,20 +48,81 @@ async function handleSave() {
     const body = {
       nombres: cliente.value.nombres,
       apellidos: cliente.value.apellidos,
-      telefono: cliente.value.telefono,
-      direccion: cliente.value.direccion,
+      telefono: cliente.value.telefono || undefined,
+      direccion: cliente.value.direccion || undefined,
     }
+
+    let clienteId = cliente.value.id
+
     if (props.modoEdicion) {
       await http.patch(`${ENDPOINT}/${cliente.value.id}`, body)
     } else {
-      await http.post(ENDPOINT, body)
+      const response = await http.post(ENDPOINT, body)
+      clienteId = response.data.id
     }
+
     emit('guardar')
     cliente.value = {} as Cliente
     dialogVisible.value = false
   } catch (error: any) {
-    alert(error?.response?.data?.message)
+    alert(error?.response?.data?.message || 'Error al guardar el cliente')
   }
+}
+
+// Función para abrir el diálogo de mascota (guarda el cliente primero)
+async function abrirDialogoMascota() {
+  if (!cliente.value.nombres || !cliente.value.apellidos) {
+    alert('Por favor complete primero la información del cliente antes de agregar mascotas')
+    return
+  }
+  
+  try {
+    // Guardar el cliente con la información del formulario
+    const body = {
+      nombres: cliente.value.nombres,
+      apellidos: cliente.value.apellidos,
+      telefono: cliente.value.telefono || undefined,
+      direccion: cliente.value.direccion || undefined,
+    }
+
+    let clienteId: number
+    let clienteCompleto: Cliente
+
+    if (props.modoEdicion) {
+      await http.patch(`${ENDPOINT}/${cliente.value.id}`, body)
+      clienteId = cliente.value.id
+      clienteCompleto = { ...cliente.value, ...body }
+    } else {
+      const response = await http.post(ENDPOINT, body)
+      clienteId = response.data.id
+      clienteCompleto = { id: clienteId, ...body }
+    }
+
+    // Guardar el cliente completo
+    clienteGuardado.value = clienteCompleto
+    
+    // Crear objeto mascota con el cliente pre-seleccionado
+    mascotaParaRegistrar.value = {
+      idCliente: clienteId,
+      clientes: clienteCompleto,
+    } as Mascota
+    
+    // Abrir el diálogo de mascota
+    mostrarDialogoMascota.value = true
+  } catch (error: any) {
+    alert(error?.response?.data?.message || 'Error al guardar el cliente')
+  }
+}
+
+// Cuando se guarda una mascota, cerrar ambos diálogos
+function handleMascotaGuardada() {
+  mostrarDialogoMascota.value = false
+  // Emitir evento de guardado y cerrar el diálogo de cliente
+  emit('guardar')
+  cliente.value = {} as Cliente
+  clienteGuardado.value = null
+  mascotaParaRegistrar.value = {} as Mascota
+  dialogVisible.value = false
 }
 </script>
 
@@ -147,9 +219,24 @@ async function handleSave() {
           severity="secondary"
           @click="dialogVisible = false"
         />
+        <Button
+          label="Registrar Mascota"
+          icon="pi pi-heart"
+          severity="success"
+          @click="abrirDialogoMascota"
+        />
         <Button label="Guardar Cliente" icon="pi pi-save" @click="handleSave" />
       </div>
     </Dialog>
+
+    <!-- Diálogo de Mascota -->
+    <MascotaSave
+      :mostrar="mostrarDialogoMascota"
+      :mascota="mascotaParaRegistrar"
+      :modoEdicion="false"
+      @guardar="handleMascotaGuardada"
+      @close="mostrarDialogoMascota = false"
+    />
   </div>
 </template>
 

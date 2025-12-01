@@ -12,12 +12,14 @@ export class ClientesService {
   ) {}
 
   async create(createClienteDto: CreateClienteDto): Promise<Cliente> {
-    let cliente = await this.clientesRepository.findOneBy({
-      telefono: createClienteDto.telefono.trim(),
-    });
-    if (cliente) throw new ConflictException('El teléfono ya está registrado');
+    if (createClienteDto.telefono) {
+      const existingCliente = await this.clientesRepository.findOneBy({
+        telefono: createClienteDto.telefono.trim(),
+      });
+      if (existingCliente) throw new ConflictException('El teléfono ya está registrado');
+    }
 
-    cliente = new Cliente();
+    const cliente = new Cliente();
     Object.assign(cliente, createClienteDto);
     return this.clientesRepository.save(cliente);
   }

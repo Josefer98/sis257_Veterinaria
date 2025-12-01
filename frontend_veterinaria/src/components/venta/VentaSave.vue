@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Cliente } from '@/models/cliente'
+import type { Mascota } from '@/models/mascota'
 import type { Venta } from '@/models/venta'
 import http from '@/plugins/axios'
 import { Button, Calendar, Dialog, Dropdown, InputNumber, Select } from 'primevue'
@@ -25,6 +26,7 @@ const emit = defineEmits(['guardar', 'close'])
     DATA
 ============================================================ */
 const clientes = ref<Cliente[]>([])
+const mascotas = ref<Mascota[]>([])
 const productos = ref<any[]>([])
 const servicios = ref<any[]>([])
 const items = ref<any[]>([]) // detalles de venta
@@ -61,10 +63,30 @@ async function obtenerClientes() {
   }))
 }
 
+async function obtenerMascotas() {
+  mascotas.value = await http.get('mascotas').then((res) => res.data)
+  console.log('Mascotas cargadas:', mascotas.value)
+  console.log('Primera mascota:', mascotas.value[0])
+}
+
 async function obtenerCatalogos() {
   productos.value = await http.get('productos').then((res) => res.data)
   servicios.value = await http.get('servicios').then((res) => res.data)
 }
+
+const mascotasDelCliente = computed(() => {
+  if (!venta.value.idCliente) return []
+  
+  const clienteId = Number(venta.value.idCliente)
+  
+  const filtered = mascotas.value.filter((m) => {
+    // El backend devuelve el objeto cliente completo en 'clientes', no solo el ID
+    const mascotaClienteId = m.clientes?.id || m.idCliente
+    return Number(mascotaClienteId) === clienteId
+  })
+  
+  return filtered
+})
 
 function fechaHoyBolivia() {
   const hoy = new Date()
@@ -78,17 +100,27 @@ watch(
   (nuevoValor) => {
     if (nuevoValor) {
       obtenerClientes()
+      obtenerMascotas()
       obtenerCatalogos()
 
       if (props.venta?.id) {
         venta.value = { ...props.venta }
         venta.value.idCliente = props.venta.cliente?.id
+        venta.value.idMascota = props.venta.mascota?.id
       } else {
         venta.value = {} as Venta
         items.value = []
         venta.value.fecha = fechaHoyBolivia()
       }
     }
+  },
+)
+
+// Limpiar mascota seleccionada cuando cambia el cliente
+watch(
+  () => venta.value.idCliente,
+  () => {
+    venta.value.idMascota = undefined
   },
 )
 
@@ -159,6 +191,7 @@ async function handleSave() {
 
     const body = {
       idCliente: venta.value.idCliente,
+      idMascota: venta.value.idMascota,
       fecha: venta.value.fecha,
       total: venta.value.total,
       items: items.value,
@@ -228,6 +261,23 @@ function clienteGuardado(nuevoCliente: Cliente) {
                 @click="clienteDialogVisible = true"
               />
             </div>
+          </div>
+
+          <!-- MASCOTA -->
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-heart label-icon"></i>
+              Mascota
+            </label>
+            <Select
+              v-model="venta.idMascota"
+              :options="mascotasDelCliente"
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccionar mascota (opcional)"
+              class="flex-auto"
+              :disabled="!venta.idCliente"
+            />
           </div>
 
           <!-- FECHA -->
@@ -302,65 +352,59 @@ function clienteGuardado(nuevoCliente: Cliente) {
               <Button label="Agregar" icon="pi pi-plus" @click="agregarItem" class="add-button" />
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- SECCIÓN: ITEMS AGREGADOS -->
-      <div class="section-card">
-        <div class="section-header">
-          <i class="pi pi-list section-icon"></i>
-          <h4 class="section-title">Items Agregados</h4>
-        </div>
+          <!-- TABLA DE ITEMS AGREGADOS -->
+          <div class="items-table-wrapper">
+            <h5 class="items-subtitle">Items en carrito</h5>
+            <table class="elegant-table">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Descripción</th>
+                  <th>Cantidad</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, i) in items" :key="i">
+                  <td>
+                    <span
+                      class="badge"
+                      :class="item.tipoItem === 'producto' ? 'badge-product' : 'badge-service'"
+                    >
+                      {{ item.tipoItem === 'producto' ? 'Producto' : 'Servicio' }}
+                    </span>
+                  </td>
+                  <td class="item-name">
+                    {{
+                      item.tipoItem === 'producto'
+                        ? productos.find((p) => p.id === item.idProducto)?.nombre
+                        : servicios.find((s) => s.id === item.idServicio)?.nombre
+                    }}
+                  </td>
+                  <td class="text-center">
+                    <span class="quantity-badge">{{ item.cantidad }}</span>
+                  </td>
+                  <td class="text-center">
+                    <Button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      text
+                      rounded
+                      @click="eliminarItem(i)"
+                    />
+                  </td>
+                </tr>
 
-        <div class="table-container">
-          <table class="elegant-table">
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Descripción</th>
-                <th>Cantidad</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, i) in items" :key="i">
-                <td>
-                  <span
-                    class="badge"
-                    :class="item.tipoItem === 'producto' ? 'badge-product' : 'badge-service'"
-                  >
-                    {{ item.tipoItem === 'producto' ? 'Producto' : 'Servicio' }}
-                  </span>
-                </td>
-                <td class="item-name">
-                  {{
-                    item.tipoItem === 'producto'
-                      ? productos.find((p) => p.id === item.idProducto)?.nombre
-                      : servicios.find((s) => s.id === item.idServicio)?.nombre
-                  }}
-                </td>
-                <td class="text-center">
-                  <span class="quantity-badge">{{ item.cantidad }}</span>
-                </td>
-                <td class="text-center">
-                  <Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    text
-                    rounded
-                    @click="eliminarItem(i)"
-                  />
-                </td>
-              </tr>
-
-              <tr v-if="items.length === 0">
-                <td colspan="4" class="empty-state">
-                  <i class="pi pi-inbox empty-icon"></i>
-                  <p>No hay items agregados</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                <tr v-if="items.length === 0">
+                  <td colspan="4" class="empty-state">
+                    <i class="pi pi-inbox empty-icon"></i>
+                    <p>No hay items agregados</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- TOTAL -->
@@ -501,6 +545,21 @@ function clienteGuardado(nuevoCliente: Cliente) {
 .add-button {
   width: 100%;
   min-width: 120px;
+}
+
+/* ===== WRAPPER DE TABLA DE ITEMS ===== */
+.items-table-wrapper {
+  margin-top: 24px;
+}
+
+.items-subtitle {
+  color: #ff6f61;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  padding-left: 4px;
+  border-left: 3px solid #ff6f61;
+  padding-left: 12px;
 }
 
 /* ===== TABLA ELEGANTE ===== */

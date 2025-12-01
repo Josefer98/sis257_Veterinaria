@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsDateString, IsDefined, IsInt, IsNotEmpty } from "class-validator";
+import { IsArray, IsDateString, IsDefined, IsInt, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateVenteItemDto {
     @ApiProperty({enum: ['producto', 'servicio']} )
@@ -25,6 +25,11 @@ export class CreateVentaDto {
     @IsInt({ message: 'El campo idCliente debe ser un número entero' })
     readonly idCliente: number;
 
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsInt({ message: 'El campo idMascota debe ser un número entero' })
+    readonly idMascota?: number;
+
     @ApiProperty({ type: [CreateVenteItemDto] })
     @IsArray({ message: 'El campo items debe ser un arreglo' })
     @Type(() => CreateVenteItemDto)
@@ -32,3 +37,4 @@ export class CreateVentaDto {
 
     
 }
+

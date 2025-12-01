@@ -13,10 +13,10 @@ export class Cliente {
   @Column('varchar', { name: 'apellidos', length: 100 })
   apellidos: string;
 
-  @Column('varchar', { name: 'telefono', length: 15 })
+  @Column('varchar', { name: 'telefono', length: 15, nullable: true })
   telefono: string;
 
-  @Column('varchar', { name: 'direccion', length: 200 })
+  @Column('varchar', { name: 'direccion', length: 200, nullable: true })
   direccion: string;
 
   @CreateDateColumn({ name: 'fecha_creacion' })
