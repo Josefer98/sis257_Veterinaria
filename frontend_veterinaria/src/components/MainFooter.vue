@@ -13,12 +13,12 @@
                 </div>
                 <div class="footer-tittle">
                   <div class="footer-pera">
-                    <p>Lorem ipsum dolor sit amet, adipiscing elit, sed do eiusmod tempor elit.</p>
+                    <p>Nuestras redes y como encontrarnos.</p>
                   </div>
                 </div>
                 <!-- social -->
                 <div class="footer-social">
-                  <a href="https://www.facebook.com/sai4ull"
+                  <a href="https://www.facebook.com/PetCenter.Bo"
                     ><i class="fab fa-facebook-square"></i
                   ></a>
                   <a href="#"><i class="fab fa-twitter-square"></i></a>
@@ -31,13 +31,10 @@
           <div class="col-xl-2 col-lg-2 col-md-4 col-sm-5">
             <div class="single-footer-caption mb-50">
               <div class="footer-tittle">
-                <h4>Company</h4>
+                <h4>Sobre Petcare</h4>
                 <ul>
-                  <li><a href="index.html">Home</a></li>
-                  <li><a href="about.html">About Us</a></li>
-                  <li  class="site-footer-link-item"><a href="#" class="site-footer-link">Clientes</a></li>
-                  <li><a href="#">Cases</a></li>
-                  <li><a href="contact.html"> Contact Us</a></li>
+                  <li><a href="/">Inicio</a></li>
+                  <li><a href="/">Sobre nosotros</a></li>
                 </ul>
               </div>
             </div>
@@ -45,13 +42,13 @@
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-7">
             <div class="single-footer-caption mb-50">
               <div class="footer-tittle">
-                <h4>Services</h4>
+                <h4>Guia sobre nuestros Serivicios</h4>
                 <ul>
-                  <li><a href="#">Commercial Cleaning</a></li>
-                  <li><a href="#">Office Cleaning</a></li>
-                  <li><a href="#">Building Cleaning</a></li>
-                  <li><a href="#">Floor Cleaning</a></li>
-                  <li><a href="#">Apartment Cleaning</a></li>
+                  <li><a href="https://youtu.be/cRPq8pnTRcM">Baños sanitarios a tu peludito</a></li>
+                  <li><a href="#">-</a></li>
+                  <li><a href="#">-</a></li>
+                  <li><a href="#">-</a></li>
+                  <li><a href="#">-</a></li>
                 </ul>
               </div>
             </div>
@@ -59,11 +56,11 @@
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
             <div class="single-footer-caption mb-50">
               <div class="footer-tittle">
-                <h4>Get in Touch</h4>
+                <h4>Contactanos</h4>
                 <ul>
-                  <li><a href="#">152-515-6565</a></li>
-                  <li><a href="#"> Demomail@gmail.com</a></li>
-                  <li><a href="#">New Orleans, USA</a></li>
+                  <li><a href="https://wa.me/qr/UQVLLV7LU3HBN1">+591 73473424</a></li>
+                  <li><a href="#"> PetCare@gmail.com</a></li>
+                  <li><a href="https://www.google.com/maps/place/Sucre/data=!4m2!3m1!1s0x93fbc8bc8187832f:0xbd9df259af1bee96?sa=X&ved=1t:242&ictx=111">Sucre - Bolivia</a></li>
                 </ul>
               </div>
             </div>

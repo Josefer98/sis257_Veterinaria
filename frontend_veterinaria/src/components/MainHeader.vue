@@ -24,7 +24,7 @@ const location = useRoute()
                   <nav>
                     <ul id="navigation">
                       <li class="nav-item">
-                        <RouterLink to="/" class="nav-link click-scroll">home</RouterLink>
+                        <RouterLink to="/" class="nav-link click-scroll">Inicio</RouterLink>
                       </li>
                       <li class="nav-item">
                         <RouterLink to="/clientes" class="nav-link click-scroll"
