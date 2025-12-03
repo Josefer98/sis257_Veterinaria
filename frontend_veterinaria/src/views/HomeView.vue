@@ -181,7 +181,7 @@
             <!-- Section Tittle -->
             <div class="section-tittle text-center mb-70">
               <span>Nuestros peluditos</span>
-              <h2>Nuestra galeria</h2>
+              <h2>Nuestra galeria de servicios</h2>
             </div>
           </div>
         </div>
@@ -199,7 +199,7 @@
             <div class="single-gallery mb-30">
               <div
                 class="gallery-img size-img"
-                style="background-image: url(/src/assets/img/gallery/gallery2.png)"
+                style="background-image: url(/src/assets/img/gallery/Vacunas1.png)"
               ></div>
             </div>
           </div>
@@ -207,7 +207,7 @@
             <div class="single-gallery mb-30">
               <div
                 class="gallery-img size-img"
-                style="background-image: url(/src/assets/img/gallery/gallery3.png)"
+                style="background-image: url(/src/assets/img/gallery/Op.png)"
               ></div>
             </div>
           </div>
@@ -215,7 +215,7 @@
             <div class="single-gallery mb-30">
               <div
                 class="gallery-img size-img"
-                style="background-image: url(/src/assets/img/gallery/gallery4.png)"
+                style="background-image: url(/src/assets/img/gallery/Radiografias.png)"
               ></div>
             </div>
           </div>
