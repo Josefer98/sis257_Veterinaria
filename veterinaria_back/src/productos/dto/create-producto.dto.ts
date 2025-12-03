@@ -52,4 +52,10 @@ export class CreateProductoDto {
   @IsNotEmpty({ message: 'El campo stock no debe estar vacío' })
   @IsInt({ message: 'El campo stock debe ser un número entero' })
   readonly stock: number;
+
+  @ApiProperty({ required: false })
+  @IsString({ message: 'La URL de la imagen debe ser texto' })
+  @MaxLength(500, { message: 'La URL de la imagen es muy larga' })
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  readonly imagenUrl?: string;
 }

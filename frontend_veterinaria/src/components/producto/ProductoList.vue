@@ -58,6 +58,7 @@ defineExpose({ obtenerLista })
       <thead>
         <tr>
           <th><i class="pi pi-hashtag"></i> Nro.</th>
+          <th><i class="pi pi-image"></i> Imagen</th>
           <th><i class="pi pi-box"></i> Nombre</th>
           <th><i class="pi pi-tag"></i> Categoría</th>
           <th><i class="pi pi-align-left"></i> Descripción</th>
@@ -69,6 +70,16 @@ defineExpose({ obtenerLista })
       <tbody>
         <tr v-for="(producto, index) in productosFiltrados" :key="producto.id">
           <td>{{ index + 1 }}</td>
+          <td class="text-center">
+            <img 
+              v-if="producto.imagenUrl" 
+              :src="producto.imagenUrl" 
+              :alt="producto.nombre" 
+              class="product-thumb"
+              @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
+            />
+            <i v-else class="pi pi-image text-gray-400 text-xl"></i>
+          </td>
           <td>{{ producto.nombre }}</td>
           <td>{{ producto.categoria.nombre }}</td>
           <td>{{ producto.descripcion }}</td>
@@ -280,5 +291,13 @@ defineExpose({ obtenerLista })
 
 .styled-table tbody tr {
   animation: fadeIn 0.3s ease;
+}
+
+.product-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 </style>

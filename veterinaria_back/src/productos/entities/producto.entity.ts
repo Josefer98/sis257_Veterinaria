@@ -33,6 +33,9 @@ export class Producto {
   @Column('int', { name: 'stock' })
   stock: number;
 
+  @Column('varchar', { name: 'imagen_url', length: 500, nullable: true })
+  imagenUrl: string;
+
   @CreateDateColumn({ name: 'fecha_creacion' })
   fechaCreacion: Date;
 

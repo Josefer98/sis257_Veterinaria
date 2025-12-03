@@ -47,6 +47,7 @@ async function handleSave() {
       descripcion: producto.value.descripcion,
       precio: producto.value.precio,
       stock: producto.value.stock,
+      imagenUrl: producto.value.imagenUrl,
     }
     if (props.modoEdicion) {
       await http.patch(`${ENDPOINT}/${producto.value.id}`, body)
@@ -135,6 +136,19 @@ watch(
               class="flex-auto"
               autocomplete="off"
               placeholder="Descripción del producto"
+            />
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">
+              <i class="pi pi-image label-icon"></i>
+              URL Imagen
+            </label>
+            <InputText
+              v-model="producto.imagenUrl"
+              class="flex-auto"
+              autocomplete="off"
+              placeholder="https://ejemplo.com/imagen.jpg"
             />
           </div>
         </div>

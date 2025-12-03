@@ -32,6 +32,7 @@ export class ProductosService {
         descripcion:true,
         precio:true,
         stock:true,
+        imagenUrl:true,
         categoria:{id:true, nombre:true}
       }
     });
