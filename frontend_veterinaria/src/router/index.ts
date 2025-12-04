@@ -60,6 +60,13 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue'),
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 router.beforeEach(async (to) => {
   const publicPages = ['/login']

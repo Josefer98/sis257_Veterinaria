@@ -55,16 +55,16 @@ defineExpose({ obtenerLista })
     <table class="styled-table">
       <thead>
         <tr>
-          <th><i class="pi pi-hashtag"></i> Nro.</th>
-          <th><i class="pi pi-user"></i> Nombre</th>
-          <th><i class="pi pi-cog"></i> Acciones</th>
+          <th class="text-center"><i class="pi pi-hashtag"></i> Nro.</th>
+          <th class="text-center"><i class="pi pi-user"></i> Nombre</th>
+          <th class="text-center"><i class="pi pi-cog"></i> Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(tipoServicio, index) in tipoServiciosFiltrados" :key="tipoServicio.id">
-          <td>{{ index + 1 }}</td>
-          <td>{{ tipoServicio.nombre }}</td>
-          <td>
+          <td class="text-center">{{ index + 1 }}</td>
+          <td class="text-center">{{ tipoServicio.nombre }}</td>
+          <td class="text-center">
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(tipoServicio)" />
             <Button
               icon="pi pi-trash"

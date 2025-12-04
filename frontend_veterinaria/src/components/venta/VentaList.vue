@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { Venta } from '@/models/venta'
 import http from '@/plugins/axios'
 import { Button, Dialog, InputGroup, InputGroupAddon, InputText } from 'primevue'
@@ -65,7 +65,37 @@ async function verDetalle(venta: Venta) {
   ventaDetalle.value = venta
 
   // Obtener los detalles desde el backend
-  detalles.value = await http.get(`detalle-ventas/venta/${venta.id}`).then((res) => res.data)
+  const detallesRaw = await http.get(`detalle-ventas/venta/${venta.id}`).then((res) => res.data)
+  
+  // Debug: ver qué datos devuelve el backend
+  console.log('Detalles de venta (raw):', detallesRaw)
+
+  // Enriquecer los detalles con los nombres de productos/servicios
+  const detallesEnriquecidos = await Promise.all(
+    detallesRaw.map(async (item: any) => {
+      if (item.idProducto) {
+        try {
+          const producto = await http.get(`productos/${item.idProducto}`).then((res) => res.data)
+          return { ...item, producto }
+        } catch (error) {
+          console.error('Error al obtener producto:', error)
+          return item
+        }
+      } else if (item.idServicio) {
+        try {
+          const servicio = await http.get(`servicios/${item.idServicio}`).then((res) => res.data)
+          return { ...item, servicio }
+        } catch (error) {
+          console.error('Error al obtener servicio:', error)
+          return item
+        }
+      }
+      return item
+    })
+  )
+
+  detalles.value = detallesEnriquecidos
+  console.log('Detalles enriquecidos:', detalles.value)
 
   mostrarDetalleDialog.value = true
 }
@@ -83,19 +113,19 @@ async function verDetalle(venta: Venta) {
     <table class="styled-table">
       <thead>
         <tr>
-          <th><i class="pi pi-hashtag"></i> Nro.</th>
-          <th><i class="pi pi-user"></i> Cliente</th>
-          <th><i class="pi pi-user"></i> Detalle De Venta</th>
-          <th><i class="pi pi-calendar"></i> Fecha</th>
-          <th><i class="pi pi-money-bill"></i> Total</th>
+          <th class="text-center"><i class="pi pi-hashtag"></i> Nro.</th>
+          <th class="text-center"><i class="pi pi-user"></i> Cliente</th>
+          <th class="text-center"><i class="pi pi-user"></i> Detalle De Venta</th>
+          <th class="text-center"><i class="pi pi-calendar"></i> Fecha</th>
+          <th class="text-center"><i class="pi pi-money-bill"></i> Total</th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="(venta, index) in ventasFiltrados" :key="venta.id">
-          <td>{{ index + 1 }}</td>
-          <td>{{ venta.cliente?.nombres }} {{ venta.cliente?.apellidos }}</td>
-          <td>
+          <td class="text-center">{{ index + 1 }}</td>
+          <td class="text-center">{{ venta.cliente?.nombres }} {{ venta.cliente?.apellidos }}</td>
+          <td class="text-center">
             <Button
               label="ver detalle"
               icon="pi pi-eye"
@@ -103,8 +133,8 @@ async function verDetalle(venta: Venta) {
               @click="verDetalle(venta)"
             />
           </td>
-          <td>{{ formatearFecha(venta.fecha) }}</td>
-          <td>{{ venta.total }} BS</td>
+          <td class="text-center">{{ formatearFecha(venta.fecha) }}</td>
+          <td class="text-center">{{ venta.total }} BS</td>
         </tr>
 
         <tr v-if="ventasFiltrados.length === 0">
@@ -113,14 +143,14 @@ async function verDetalle(venta: Venta) {
       </tbody>
     </table>
 
-    <!-- Confirmación de Eliminación -->
+    <!-- ConfirmaciÃ³n de EliminaciÃ³n -->
     <Dialog
       v-model:visible="mostrarConfirmDialog"
-      header="Confirmar Eliminación"
+      header="Confirmar EliminaciÃ³n"
       :style="{ width: '25rem' }"
     >
       <p>
-        ¿Estás seguro de que deseas eliminar la venta
+        Â¿EstÃ¡s seguro de que deseas eliminar la venta
         <b>#{{ ventaDelete?.id }}</b> del cliente <b>{{ ventaDelete?.cliente?.nombres }}</b
         >?
       </p>
@@ -136,59 +166,84 @@ async function verDetalle(venta: Venta) {
       </div>
     </Dialog>
 
+    <!-- Dialog de Detalle de Venta - Diseño Profesional -->
     <Dialog
       v-model:visible="mostrarDetalleDialog"
-      header="Detalle de la Venta"
-      :style="{ width: '45rem', color: '#27ae60' }"
+      :style="{ width: '700px' }"
+      modal
+      :closable="true"
     >
-      <div v-if="ventaDetalle">
-        <p style="color: white">
-          <b style="color: #ff6f61">Cliente:</b> {{ ventaDetalle.cliente?.nombres }}
-          {{ ventaDetalle.cliente?.apellidos }}
-        </p>
-        <p style="color: white">
-          <b style="color: #ff6f61">Fecha:</b> {{ formatearFecha(ventaDetalle.fecha) }}
-        </p>
-        <p style="color: white"><b style="color: #ff6f61">Total:</b> {{ ventaDetalle.total }} Bs</p>
+      <template #header>
+        <div class="recibo-header">
+          <div class="header-left">
+            <i class="pi pi-receipt" style="font-size: 28px; color: #ff6f61;"></i>
+            <div>
+              <h2 style="margin: 0; color: #2c3e50; font-size: 22px;">Detalle de Venta</h2>
+              <span style="color: #7f8c8d; font-size: 14px;">Registro #{{ ventaDetalle?.id }}</span>
+            </div>
+          </div>
+        </div>
+      </template>
 
-        <h4 class="mt-3" style="color: #27ae60">Items de la venta</h4>
+      <div v-if="ventaDetalle" class="recibo-body">
+        <!-- Información del cliente y fecha -->
+        <div class="recibo-info-section">
+          <div class="info-block">
+            <label>Cliente</label>
+            <p>{{ ventaDetalle.cliente?.nombres }} {{ ventaDetalle.cliente?.apellidos }}</p>
+          </div>
+          <div class="info-block">
+            <label>Fecha de Venta</label>
+            <p>{{ formatearFecha(ventaDetalle.fecha) }}</p>
+          </div>
+        </div>
 
-        <table class="styled-table">
-          <thead>
-            <tr>
-              <th>Tipo</th>
-              <th>Descripción</th>
-              <th>Cant.</th>
-              <th>Precio</th>
-            </tr>
-          </thead>
+        <!-- Divisor -->
+        <div class="divider"></div>
 
-          <tbody>
-            <tr v-for="item in detalles" :key="item.id">
-              <!-- Tipo item -->
-              <td>
-                {{ item.idProducto ? 'producto' : 'servicio' }}
-              </td>
-              <td>
-                <span v-if="item.tipoItem === 'producto' && item.producto">
-                  {{ item.producto.nombre }}
-                </span>
+        <!-- Tabla de productos/servicios -->
+        <div class="recibo-items">
+          <h3><i class="pi pi-list"></i> Items de la Venta</h3>
+          <table class="recibo-tabla">
+            <thead>
+              <tr>
+                <th class="col-descripcion">Descripción</th>
+                <th class="col-cantidad">Cant.</th>
+                <th class="col-precio">P. Unit.</th>
+                <th class="col-subtotal">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in detalles" :key="item.id">
+                <td class="col-descripcion">
+                  <div class="item-descripcion">
+                    <span class="item-icon">{{ item.idProducto ? '📦' : '🩺' }}</span>
+                    <div class="item-text">
+                      <span class="item-nombre">
+                        {{ item.producto?.nombre || item.servicio?.nombre || item.descripcion || 'Sin descripción' }}
+                      </span>
+                      <span class="item-tipo">{{ item.idProducto ? 'Producto' : 'Servicio' }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-cantidad">{{ item.cantidad }}</td>
+                <td class="col-precio">Bs. {{ Number(item.precioUnitario).toFixed(2) }}</td>
+                <td class="col-subtotal">Bs. {{ (Number(item.precioUnitario) * Number(item.cantidad)).toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-                <span v-else-if="item.tipoItem === 'servicio' && item.servicio">
-                  {{ item.servicio.nombre }}
-                </span>
+        <!-- Divisor -->
+        <div class="divider"></div>
 
-                <span v-else> Desconocido </span>
-              </td>
-              <td>{{ item.cantidad }}</td>
-              <td>{{ item.precioUnitario }} Bs</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="flex justify-end mt-3">
-        <Button label="Cerrar" @click="mostrarDetalleDialog = false" />
+        <!-- Total -->
+        <div class="recibo-total">
+         <div class="total-row">
+            <span class="total-label">TOTAL</span>
+            <span class="total-monto">Bs. {{ Number(ventaDetalle.total).toFixed(2) }}</span>
+          </div>
+        </div>
       </div>
     </Dialog>
   </div>
@@ -286,7 +341,7 @@ async function verDetalle(venta: Venta) {
   font-size: 15px;
 }
 
-/* ===== BOTONES DE ACCIÓN ===== */
+/* ===== BOTONES DE ACCIÃ“N ===== */
 .acciones {
   display: flex;
   justify-content: center;
@@ -310,7 +365,7 @@ async function verDetalle(venta: Venta) {
   color: #e74c3c;
 }
 
-/* ===== ESTADO VACÍO ===== */
+/* ===== ESTADO VACÃO ===== */
 .no-data {
   text-align: center;
   padding: 60px 20px !important;
@@ -321,14 +376,14 @@ async function verDetalle(venta: Venta) {
 }
 
 .no-data::before {
-  content: '🛒';
+  content: 'ðŸ›’';
   display: block;
   font-size: 48px;
   margin-bottom: 12px;
   opacity: 0.5;
 }
 
-/* ===== BÚSQUEDA ===== */
+/* ===== BÃšSQUEDA ===== */
 :deep(.p-inputgroup) {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -368,5 +423,357 @@ async function verDetalle(venta: Venta) {
 
 .styled-table tbody tr {
   animation: fadeIn 0.3s ease;
+}
+
+/* ===== ESTILOS SIMPLES PARA DETALLE DE VENTA ===== */
+.venta-detalle {
+  padding: 0;
+}
+
+.venta-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 20px;
+  margin: -20px -20px 20px -20px;
+  border-radius: 6px 6px 0 0;
+}
+
+.venta-header h3 {
+  margin: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.venta-info {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: #666;
+}
+
+.info-row .value {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.items-venta h4 {
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+  font-size: 16px;
+}
+
+.tabla-items {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.tabla-items thead {
+  background: #f8f9fa;
+}
+
+.tabla-items th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.tabla-items tbody tr {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tabla-items tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.tabla-items td {
+  padding: 12px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.item-type {
+  font-size: 18px;
+}
+
+.venta-total {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+  padding: 16px 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  border: 2px solid #27ae60;
+}
+
+.total-label {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.total-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #27ae60;
+}
+
+.text-muted {
+  color: #95a5a6;
+  font-style: italic;
+}
+
+/* ===== ESTILOS PROFESIONALES PARA DETALLE DE VENTA (RECIBO) ===== */
+.recibo-header .header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.recibo-body {
+  padding: 4px 0;
+}
+
+.recibo-info-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.info-block label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #7f8c8d;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.info-block p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #dee2e6, transparent);
+  margin: 20px 0;
+}
+
+.recibo-items h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recibo-items h3 i {
+  color: #ff6f61;
+}
+
+.recibo-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recibo-tabla thead {
+  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+  border-bottom: 2px solid #ff6f61;
+}
+
+.recibo-tabla th {
+  padding: 12px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recibo-tabla th.col-cantidad,
+.recibo-tabla th.col-precio {
+  text-align: center;
+}
+
+.recibo-tabla th.col-subtotal {
+  text-align: right;
+}
+
+.recibo-tabla tbody tr {
+  border-bottom: 1px solid #f1f3f5;
+  transition: background 0.2s ease;
+}
+
+.recibo-tabla tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.recibo-tabla td {
+  padding: 14px 12px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.item-descripcion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-nombre {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.item-tipo {
+  font-size: 11px;
+  color: #868e96;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.col-cantidad {
+  text-align: center;
+  font-weight: 600;
+}
+
+.col-precio {
+  text-align: center;
+  color: #495057;
+}
+
+.col-subtotal {
+  text-align: right;
+  font-weight: 700;
+  color: #27ae60;
+}
+
+.recibo-total {
+  background: linear-gradient(135deg, #fff5f3 0%, #ffe8e5 100%);
+  padding: 20px 24px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 2px solid #ff6f61;
+  box-shadow: 0 2px 8px rgba(255, 111, 97, 0.15);
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+  letter-spacing: 1px;
+}
+
+.total-monto {
+  font-size: 28px;
+  font-weight: 700;
+  color: #27ae60;
+}
+
+.recibo-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Forzar fondo claro en el dialog - Versión agresiva */
+:deep(.p-dialog.p-component) {
+  background: white !important;
+  color: #2c3e50 !important;
+}
+
+:deep(.p-dialog .p-dialog-header) {
+  background: white !important;
+  color: #2c3e50 !important;
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+:deep(.p-dialog .p-dialog-title) {
+  color: #2c3e50 !important;
+}
+
+:deep(.p-dialog .p-dialog-header-icons button) {
+  color: #6c757d !important;
+}
+
+:deep(.p-dialog .p-dialog-header-icons button:hover) {
+  background: #f8f9fa !important;
+  color: #2c3e50 !important;
+}
+
+:deep(.p-dialog .p-dialog-content) {
+  background: white !important;
+  color: #2c3e50 !important;
+}
+
+:deep(.p-dialog .p-dialog-footer) {
+  background: white !important;
+  border-top: 1px solid #e9ecef !important;
+  padding: 1rem !important;
+}
+
+/* Asegurar que todos los elementos internos también sean claros */
+:deep(.p-dialog h2),
+:deep(.p-dialog h3),
+:deep(.p-dialog h4),
+:deep(.p-dialog p),
+:deep(.p-dialog span),
+:deep(.p-dialog label),
+:deep(.p-dialog td),
+:deep(.p-dialog th) {
+  color: inherit !important;
 }
 </style>

@@ -5,6 +5,7 @@ import FeaturedProducts from '@/components/dashboard/FeaturedProducts.vue'
 import FeaturedServices from '@/components/dashboard/FeaturedServices.vue'
 import RecentActivity from '@/components/dashboard/RecentActivity.vue'
 import DashboardAlerts from '@/components/dashboard/DashboardAlerts.vue'
+import TipsOfTheDay from '@/components/dashboard/TipsOfTheDay.vue'
 </script>
 
 <template>
@@ -17,12 +18,38 @@ import DashboardAlerts from '@/components/dashboard/DashboardAlerts.vue'
           Panel de Administración
         </h1>
         <p class="dashboard-subtitle">Bienvenido al sistema de gestión de PetCare Veterinaria</p>
-      </div>
-      <div class="header-actions">
-        <span class="current-date">
-          <i class="pi pi-calendar"></i>
-          {{ new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
-        </span>
+        
+        <!-- Info Cards -->
+        <div class="header-info-cards">
+          <div class="info-card">
+            <i class="pi pi-calendar"></i>
+            <div class="info-card-content">
+              <span class="info-label">Fecha</span>
+              <span class="info-value">{{ new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) }}</span>
+            </div>
+          </div>
+          <div class="info-card">
+            <i class="pi pi-clock"></i>
+            <div class="info-card-content">
+              <span class="info-label">Última actualización</span>
+              <span class="info-value">{{ new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }}</span>
+            </div>
+          </div>
+          <div class="info-card">
+            <i class="pi pi-user"></i>
+            <div class="info-card-content">
+              <span class="info-label">Usuario</span>
+              <span class="info-value">Administrador</span>
+            </div>
+          </div>
+          <div class="info-card">
+            <i class="pi pi-check-circle"></i>
+            <div class="info-card-content">
+              <span class="info-label">Estado del sistema</span>
+              <span class="info-value status-active">Activo</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -49,6 +76,9 @@ import DashboardAlerts from '@/components/dashboard/DashboardAlerts.vue'
       </div>
       <div class="alerts-column">
         <DashboardAlerts />
+        <div class="mt-4">
+          <TipsOfTheDay />
+        </div>
       </div>
     </div>
   </main>
@@ -59,8 +89,6 @@ import DashboardAlerts from '@/components/dashboard/DashboardAlerts.vue'
   max-width: 1400px;
   margin: 0 auto;
   padding: 120px 24px 32px 24px; /* Aumentado padding-top para evitar solapamiento */
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
 }
 
 .dashboard-header {
@@ -69,10 +97,6 @@ import DashboardAlerts from '@/components/dashboard/DashboardAlerts.vue'
   padding: 32px;
   margin-bottom: 32px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
 }
 
 .header-content {
@@ -97,31 +121,60 @@ import DashboardAlerts from '@/components/dashboard/DashboardAlerts.vue'
 .dashboard-subtitle {
   font-size: 16px;
   color: #7f8c8d;
-  margin: 0;
+  margin: 0 0 24px 0;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
+/* Info Cards */
+.header-info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
+  margin-top: 20px;
 }
 
-.current-date {
-  font-size: 14px;
-  color: #7f8c8d;
+.info-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-weight: 500;
-  text-transform: capitalize;
+  gap: 12px;
+  border-left: 4px solid #ff6f61;
+  transition: all 0.3s ease;
 }
 
-.current-date i {
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-card i {
+  font-size: 24px;
   color: #ff6f61;
-  font-size: 16px;
+}
+
+.info-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 11px;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.status-active {
+  color: #27ae60;
 }
 
 /* Grid de Catálogos */

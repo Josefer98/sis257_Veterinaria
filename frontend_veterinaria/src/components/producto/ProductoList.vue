@@ -57,19 +57,19 @@ defineExpose({ obtenerLista })
     <table class="styled-table">
       <thead>
         <tr>
-          <th><i class="pi pi-hashtag"></i> Nro.</th>
-          <th><i class="pi pi-image"></i> Imagen</th>
-          <th><i class="pi pi-box"></i> Nombre</th>
-          <th><i class="pi pi-tag"></i> Categoría</th>
-          <th><i class="pi pi-align-left"></i> Descripción</th>
-          <th><i class="pi pi-dollar"></i> Precio</th>
-          <th><i class="pi pi-database"></i> Stock</th>
-          <th><i class="pi pi-cog"></i> Acciones</th>
+          <th class="text-center"><i class="pi pi-hashtag"></i> Nro.</th>
+          <th class="text-center"><i class="pi pi-image"></i> Imagen</th>
+          <th class="text-center"><i class="pi pi-box"></i> Nombre</th>
+          <th class="text-center"><i class="pi pi-tag"></i> Categoría</th>
+          <th class="text-center"><i class="pi pi-align-left"></i> Descripción</th>
+          <th class="text-center"><i class="pi pi-dollar"></i> Precio</th>
+          <th class="text-center"><i class="pi pi-database"></i> Stock</th>
+          <th class="text-center"><i class="pi pi-cog"></i> Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(producto, index) in productosFiltrados" :key="producto.id">
-          <td>{{ index + 1 }}</td>
+          <td class="text-center">{{ index + 1 }}</td>
           <td class="text-center">
             <img 
               v-if="producto.imagenUrl" 
@@ -80,12 +80,25 @@ defineExpose({ obtenerLista })
             />
             <i v-else class="pi pi-image text-gray-400 text-xl"></i>
           </td>
-          <td>{{ producto.nombre }}</td>
-          <td>{{ producto.categoria.nombre }}</td>
-          <td>{{ producto.descripcion }}</td>
-          <td>{{ producto.precio }}</td>
-          <td>{{ producto.stock }}</td>
-          <td>
+          <td class="text-center">{{ producto.nombre }}</td>
+          <td class="text-center">
+            <span class="badge badge-categoria">{{ producto.categoria.nombre }}</span>
+          </td>
+          <td class="text-center">{{ producto.descripcion }}</td>
+          <td class="text-center">{{ producto.precio }}</td>
+          <td class="text-center">
+            <span 
+              class="badge badge-stock"
+              :class="{
+                'badge-stock-bajo': producto.stock < 10,
+                'badge-stock-medio': producto.stock >= 10 && producto.stock <= 30,
+                'badge-stock-alto': producto.stock > 30
+              }"
+            >
+              {{ producto.stock }} unidades
+            </span>
+          </td>
+          <td class="text-center">
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(producto)" />
             <Button
               icon="pi pi-trash"
@@ -300,4 +313,57 @@ defineExpose({ obtenerLista })
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+}
+
+.badge-categoria {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.badge-categoria:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.badge-stock {
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.badge-stock-bajo {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.badge-stock-medio {
+  background: linear-gradient(135deg, #ffd93d 0%, #f9ca24 100%);
+  color: #333;
+}
+
+.badge-stock-alto {
+  background: linear-gradient(135deg, #6bcf7f 0%, #51cf66 100%);
+  color: white;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
 </style>

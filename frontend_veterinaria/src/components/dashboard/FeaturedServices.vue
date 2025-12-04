@@ -30,19 +30,50 @@ async function obtenerServiciosDestacados() {
   }
 }
 
-const iconosPorTipo: { [key: string]: string } = {
-  consulta: 'pi-stethoscope',
-  vacuna: 'pi-shield',
-  cirugia: 'pi-heart',
-  peluqueria: 'pi-scissors',
-  hospedaje: 'pi-home',
-  default: 'pi-briefcase',
+const iconosPorTipo: { [key: string]: { icon: string; color: string } } = {
+  consulta: { icon: 'pi-heart', color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
+  valoracion: { icon: 'pi-chart-bar', color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
+  clinica: { icon: 'pi-heart-fill', color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
+  vacuna: { icon: 'pi-shield', color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
+  vacunacion: { icon: 'pi-shield', color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
+  inyeccion: { icon: 'pi-shield', color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
+  cirugia: { icon: 'pi-heart', color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' },
+  operacion: { icon: 'pi-heart', color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' },
+  esterilizacion: { icon: 'pi-heart', color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' },
+  peluqueria: { icon: 'pi-scissors', color: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)' },
+  estetico: { icon: 'pi-star', color: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)' },
+  estetica: { icon: 'pi-star', color: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)' },
+  corte: { icon: 'pi-scissors', color: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)' },
+  pelo: { icon: 'pi-scissors', color: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)' },
+  emergencia: { icon: 'pi-exclamation-triangle', color: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)' },
+  emergencias: { icon: 'pi-exclamation-triangle', color: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)' },
+  urgencia: { icon: 'pi-exclamation-triangle', color: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)' },
+  atencion: { icon: 'pi-phone', color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+  inmediata: { icon: 'pi-exclamation-triangle', color: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)' },
+  hospedaje: { icon: 'pi-home', color: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)' },
+  default: { icon: 'pi-briefcase', color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
 }
 
-function getIconoServicio(tipoServicio: string | undefined): string {
-  if (!tipoServicio) return iconosPorTipo.default as string
-  const tipo: string = tipoServicio.toLowerCase()
-  return (iconosPorTipo[tipo] ?? iconosPorTipo.default) as string
+function normalizarTexto(texto: string): string {
+  return texto.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Elimina acentos
+    .trim()
+}
+
+function getEstiloServicio(tipoServicio: string | undefined): { icon: string; color: string } {
+  if (!tipoServicio) return iconosPorTipo.default!
+  
+  const tipoNormalizado = normalizarTexto(tipoServicio)
+  
+  // Buscar coincidencia exacta o parcial
+  const key = Object.keys(iconosPorTipo).find(k => {
+    if (k === 'default') return false
+    const keyNormalizada = normalizarTexto(k)
+    return tipoNormalizado.includes(keyNormalizada) || keyNormalizada.includes(tipoNormalizado)
+  })
+  
+  return iconosPorTipo[key || 'default']!
 }
 
 onMounted(() => {
@@ -77,8 +108,8 @@ onMounted(() => {
 
       <!-- Servicios -->
       <div v-else v-for="servicio in servicios" :key="servicio.id" class="service-card">
-        <div class="service-icon">
-          <i :class="['pi', getIconoServicio(servicio.tipoServicio?.nombre)]"></i>
+        <div class="service-icon" :style="{ background: getEstiloServicio(servicio.tipoServicio?.nombre).color }">
+          <i :class="['pi', getEstiloServicio(servicio.tipoServicio?.nombre).icon]"></i>
         </div>
         <div class="service-info">
           <h3 class="service-name">{{ servicio.nombre }}</h3>
@@ -89,9 +120,6 @@ onMounted(() => {
           <p class="service-description">{{ servicio.descripcion }}</p>
           <div class="service-footer">
             <span class="service-price">Bs. {{ Number(servicio.precio).toFixed(2) }}</span>
-            <span class="service-action">
-              <i class="pi pi-arrow-right"></i>
-            </span>
           </div>
         </div>
       </div>
@@ -133,7 +161,7 @@ onMounted(() => {
 }
 
 .view-all-link {
-  color: #ff6f61;
+  color: #8e44ad;
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
@@ -170,15 +198,13 @@ onMounted(() => {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.service-card:hover .service-action {
-  transform: translateX(4px);
-}
+
 
 .service-icon {
   width: 64px;
   height: 64px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
+  /* background se define dinámicamente */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -238,14 +264,10 @@ onMounted(() => {
 .service-price {
   font-size: 18px;
   font-weight: 700;
-  color: #ff6f61;
+  color: #27ae60;
 }
 
-.service-action {
-  color: #bdc3c7;
-  transition: all 0.3s ease;
-  font-size: 16px;
-}
+
 
 /* Skeleton Loading */
 .skeleton-card {

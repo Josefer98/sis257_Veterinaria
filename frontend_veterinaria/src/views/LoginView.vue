@@ -5,10 +5,15 @@ import { useAuthStore } from '@/stores/index'
 const usuario = ref('')
 const clave = ref('')
 const error = ref(false)
+const showPassword = ref(false)
 
 function onSubmit() {
   const authStore = useAuthStore()
   authStore.login(usuario.value, clave.value).catch(() => (error.value = true))
+}
+
+function togglePassword() {
+  showPassword.value = !showPassword.value
 }
 
 // Inicializar MDB inputs después de montar el componente
@@ -44,12 +49,12 @@ onMounted(() => {
                 <div class="card-body p-4 p-lg-5 text-black">
                   <form @submit.prevent="onSubmit">
                     <div class="d-flex align-items-center mb-3 pb-1">
-                      <i class="fas fa-user-shield fa-2x me-3" style="color: #32e9d4"></i>
-                      <span class="h1 fw-bold mb-0">Admin Panel</span>
+                      <i class="fas fa-paw fa-2x me-3" style="color: #ff6f61"></i>
+                      <span class="h1 fw-bold mb-0">PetCare Veterinaria</span>
                     </div>
 
-                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px">
-                      Acceso de Administrador
+                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px; color: #7f8c8d;">
+                      Inicia sesión para acceder al sistema de gestión
                     </h5>
 
                     <div data-mdb-input-init class="form-outline mb-4">
@@ -63,29 +68,27 @@ onMounted(() => {
                       <label class="form-label" for="form2Example17">Usuario</label>
                     </div>
 
-                    <div data-mdb-input-init class="form-outline mb-4">
+                    <div data-mdb-input-init class="form-outline mb-4 position-relative">
                       <input
                         v-model="clave"
-                        type="password"
+                        :type="showPassword ? 'text' : 'password'"
                         id="form2Example27"
                         class="form-control form-control-lg"
                         autocomplete="new-password"
                       />
                       <label class="form-label" for="form2Example27">Contraseña</label>
+                      <i 
+                        class="fas position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer"
+                        :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                        @click="togglePassword"
+                        style="z-index: 10; cursor: pointer; color: #6c757d;"
+                      ></i>
                     </div>
 
                     <!-- Mensaje de error -->
                     <div v-if="error" class="alert alert-danger" role="alert">
                       <i class="fas fa-exclamation-triangle me-2"></i>
                       Usuario y/o contraseña incorrectos
-                    </div>
-
-                    <!-- Checkbox para recordar sesión -->
-                    <div class="form-check mb-4">
-                      <input class="form-check-input" type="checkbox" value="" id="rememberMe" />
-                      <label class="form-check-label" for="rememberMe">
-                        Mantener sesión iniciada
-                      </label>
                     </div>
 
                     <div class="pt-1 mb-4">
@@ -127,4 +130,8 @@ onMounted(() => {
   </section>
 </template>
 
-<style></style>
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+</style>

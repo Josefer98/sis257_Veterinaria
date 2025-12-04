@@ -53,15 +53,18 @@ async function handleSave() {
     }
 
     let clienteId = cliente.value.id
+    let clienteCompleto: Cliente
 
     if (props.modoEdicion) {
       await http.patch(`${ENDPOINT}/${cliente.value.id}`, body)
+      clienteCompleto = { ...cliente.value, ...body }
     } else {
       const response = await http.post(ENDPOINT, body)
       clienteId = response.data.id
+      clienteCompleto = { id: clienteId, ...body }
     }
 
-    emit('guardar')
+    emit('guardar', clienteCompleto)
     cliente.value = {} as Cliente
     dialogVisible.value = false
   } catch (error: any) {
@@ -118,7 +121,7 @@ async function abrirDialogoMascota() {
 function handleMascotaGuardada() {
   mostrarDialogoMascota.value = false
   // Emitir evento de guardado y cerrar el diálogo de cliente
-  emit('guardar')
+  emit('guardar', clienteGuardado.value)
   cliente.value = {} as Cliente
   clienteGuardado.value = null
   mascotaParaRegistrar.value = {} as Mascota

@@ -13,8 +13,8 @@ const isLoginPage = computed(() => route.path === '/login')
 // Verificar si la ruta actual es home
 const isHomePage = computed(() => route.path === '/')
 
-// Aplicar fondo rosa solo si NO es home ni login
-const shouldApplyBackground = computed(() => !isHomePage.value && !isLoginPage.value)
+// Aplicar fondo rosa solo si NO es login
+const shouldApplyBackground = computed(() => !isLoginPage.value)
 </script>
 
 <template>
@@ -38,7 +38,7 @@ const shouldApplyBackground = computed(() => !isHomePage.value && !isLoginPage.v
 @import '@/assets/css/nice-select.css';
 @import '@/assets/css/style.css';
 
-/* Color de fondo solo para vistas que no sean home ni login */
+/* Color de fondo solo para vistas que no sean login */
 main.custom-background {
   background-color: #f7dad8 !important;
   min-height: 100vh;

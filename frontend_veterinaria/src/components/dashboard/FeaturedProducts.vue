@@ -142,7 +142,7 @@ onMounted(() => {
 }
 
 .view-all-link {
-  color: #ff6f61;
+  color: #8e44ad;
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
@@ -279,7 +279,7 @@ onMounted(() => {
 .product-price {
   font-size: 18px;
   font-weight: 700;
-  color: #ff6f61;
+  color: #27ae60;
 }
 
 .product-stock {

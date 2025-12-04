@@ -49,31 +49,43 @@ defineExpose({ obtenerLista })
     <div class="col-7 pl-0 mt-3">
       <InputGroup>
         <InputGroupAddon><i class="pi pi-search"></i></InputGroupAddon>
-        <InputText v-model="busqueda" type="text" placeholder="Buscar por id o fecha" />
+        <InputText v-model="busqueda" type="text" placeholder="Buscar por nombre de mascota o raza" />
       </InputGroup>
     </div>
 
     <table class="styled-table">
       <thead>
         <tr>
-          <th><i class="pi pi-hashtag"></i> Nro.</th>
-          <th><i class="pi pi-user"></i> Nombre del Cliente</th>
-          <th><i class="pi pi-heart"></i> Nombre de Mascota</th>
-          <th><i class="pi pi-list"></i> Especie</th>
-          <th><i class="pi pi-info-circle"></i> Raza</th>
-          <th><i class="pi pi-calendar"></i> Edad</th>
-          <th><i class="pi pi-cog"></i> Acciones</th>
+          <th class="text-center"><i class="pi pi-hashtag"></i> Nro.</th>
+          <th class="text-center"><i class="pi pi-user"></i> Nombre del Cliente</th>
+          <th class="text-center"><i class="pi pi-heart"></i> Nombre de Mascota</th>
+          <th class="text-center"><i class="pi pi-list"></i> Especie</th>
+          <th class="text-center"><i class="pi pi-info-circle"></i> Raza</th>
+          <th class="text-center"><i class="pi pi-calendar"></i> Edad</th>
+          <th class="text-center"><i class="pi pi-cog"></i> Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(mascota, index) in mascotasFiltrados" :key="mascota.id">
-          <td>{{ index + 1 }}</td>
-          <td>{{ mascota.clientes.nombres }}</td>
-          <td>{{ mascota.nombre }}</td>
-          <td>{{ mascota.especie }}</td>
-          <td>{{ mascota.raza }}</td>
-          <td>{{ mascota.edad }}</td>
-          <td>
+          <td class="text-center">{{ index + 1 }}</td>
+          <td class="text-center">{{ mascota.clientes.nombres }}</td>
+          <td class="text-center">{{ mascota.nombre }}</td>
+          <td class="text-center">
+            <span 
+              class="badge badge-especie"
+              :class="{
+                'badge-perro': mascota.especie?.toLowerCase().includes('perro'),
+                'badge-gato': mascota.especie?.toLowerCase().includes('gato'),
+                'badge-ave': mascota.especie?.toLowerCase().includes('ave') || mascota.especie?.toLowerCase().includes('pájaro'),
+                'badge-otro': !mascota.especie?.toLowerCase().includes('perro') && !mascota.especie?.toLowerCase().includes('gato') && !mascota.especie?.toLowerCase().includes('ave')
+              }"
+            >
+              {{ mascota.especie }}
+            </span>
+          </td>
+          <td class="text-center">{{ mascota.raza }}</td>
+          <td class="text-center">{{ mascota.edad }}</td>
+          <td class="text-center">
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(mascota)" />
             <Button
               icon="pi pi-trash"
@@ -279,4 +291,45 @@ defineExpose({ obtenerLista })
 .styled-table tbody tr {
   animation: fadeIn 0.3s ease;
 }
+
+/* ===== BADGES DE ESPECIES ===== */
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+}
+
+.badge-especie {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.badge-perro {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.badge-gato {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.badge-ave {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: #333;
+}
+
+.badge-otro {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #333;
+}
+
+.badge-especie:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 </style>

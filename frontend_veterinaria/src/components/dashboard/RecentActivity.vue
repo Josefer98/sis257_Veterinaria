@@ -2,18 +2,29 @@
 import type { Venta } from '@/models/venta'
 import http from '@/plugins/axios'
 import { onMounted, ref } from 'vue'
+import { Dialog, Button } from 'primevue'
 
 const ventas = ref<Venta[]>([])
 const loading = ref(true)
+const ventaDetalle = ref<Venta | null>(null)
+const mostrarDetalleDialog = ref(false)
+const detalles = ref<any[]>([])
 
 async function obtenerVentasRecientes() {
   try {
     loading.value = true
     const response = await http.get('ventas')
-    // Tomar las últimas 5 ventas y ordenar por fecha descendente
+    // Tomar las últimas 5 ventas y ordenar por ID descendente (más reciente primero)
     ventas.value = response.data
       .sort((a: Venta, b: Venta) => {
-        return new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        // Primero intentar ordenar por fecha
+        const fechaA = parsearFecha(a.fecha).getTime()
+        const fechaB = parsearFecha(b.fecha).getTime()
+        if (fechaA !== fechaB) {
+          return fechaB - fechaA
+        }
+        // Si las fechas son iguales, ordenar por ID (más reciente = ID mayor)
+        return (b.id || 0) - (a.id || 0)
       })
       .slice(0, 5)
   } catch (error) {
@@ -23,21 +34,86 @@ async function obtenerVentasRecientes() {
   }
 }
 
-function formatearFecha(fecha: string): string {
-  const date = new Date(fecha)
-  const opciones: Intl.DateTimeFormatOptions = {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+function parsearFecha(fecha: string | Date): Date {
+  // Si ya es un objeto Date, devolverlo
+  if (fecha instanceof Date) return fecha
+  
+  // Si la fecha viene en formato ISO o similar, necesitamos ajustarla
+  const fechaStr = fecha.toString()
+  
+  // Si la fecha no tiene hora, agregarle la hora local para evitar conversión UTC
+  if (fechaStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    // Formato: YYYY-MM-DD (sin hora)
+    return new Date(fechaStr + 'T12:00:00')
   }
-  return date.toLocaleDateString('es-ES', opciones)
+  
+  return new Date(fechaStr)
+}
+
+function formatearFecha(fecha: string): string {
+  const date = parsearFecha(fecha)
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  const ayer = new Date(hoy)
+  ayer.setDate(ayer.getDate() - 1)
+  
+  const fechaComparar = new Date(date)
+  fechaComparar.setHours(0, 0, 0, 0)
+  
+  if (fechaComparar.getTime() === hoy.getTime()) {
+    return 'Hoy, ' + date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  } else if (fechaComparar.getTime() === ayer.getTime()) {
+    return 'Ayer, ' + date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  } else {
+    return date.toLocaleDateString('es-ES', { 
+      day: '2-digit', 
+      month: 'short', 
+      year: 'numeric' 
+    })
+  }
 }
 
 function calcularTotal(venta: Venta): number {
   // Por ahora retornamos el total de la venta directamente
   return Number(venta.total) || 0
+}
+
+async function verDetalle(venta: Venta) {
+  ventaDetalle.value = venta
+  
+  // Obtener los detalles desde el backend
+  try {
+    const detallesRaw = await http.get(`detalle-ventas/venta/${venta.id}`).then((res) => res.data)
+    
+    // Enriquecer los detalles con los nombres de productos/servicios
+    const detallesEnriquecidos = await Promise.all(
+      detallesRaw.map(async (item: any) => {
+        if (item.idProducto) {
+          try {
+            const producto = await http.get(`productos/${item.idProducto}`).then((res) => res.data)
+            return { ...item, producto }
+          } catch (error) {
+            console.error('Error al obtener producto:', error)
+            return item
+          }
+        } else if (item.idServicio) {
+          try {
+            const servicio = await http.get(`servicios/${item.idServicio}`).then((res) => res.data)
+            return { ...item, servicio }
+          } catch (error) {
+            console.error('Error al obtener servicio:', error)
+            return item
+          }
+        }
+        return item
+      })
+    )
+    
+    detalles.value = detallesEnriquecidos
+    mostrarDetalleDialog.value = true
+  } catch (error) {
+    console.error('Error al obtener detalle de venta:', error)
+  }
 }
 
 onMounted(() => {
@@ -64,7 +140,13 @@ onMounted(() => {
       </div>
 
       <!-- Ventas -->
-      <div v-else-if="ventas.length > 0" v-for="venta in ventas" :key="venta.id" class="activity-item">
+      <div 
+        v-else-if="ventas.length > 0" 
+        v-for="venta in ventas" 
+        :key="venta.id" 
+        class="activity-item clickable"
+        @click="verDetalle(venta)"
+      >
         <div class="activity-icon">
           <i class="pi pi-shopping-cart"></i>
         </div>
@@ -90,6 +172,61 @@ onMounted(() => {
         <p>No hay ventas recientes</p>
       </div>
     </div>
+
+    <!-- Dialog de Detalle de Venta -->
+    <Dialog
+      v-model:visible="mostrarDetalleDialog"
+      header="Detalle de la Venta"
+      :style="{ width: '45rem' }"
+      modal
+    >
+      <div v-if="ventaDetalle">
+        <p style="color: #2c3e50; margin-bottom: 8px;">
+          <b style="color: #ff6f61">Cliente:</b> {{ ventaDetalle.cliente?.nombres }} {{ ventaDetalle.cliente?.apellidos }}
+        </p>
+        <p style="color: #2c3e50; margin-bottom: 8px;">
+          <b style="color: #ff6f61">Fecha:</b> {{ formatearFecha(ventaDetalle.fecha.toString()) }}
+        </p>
+        <p style="color: #2c3e50; margin-bottom: 16px;">
+          <b style="color: #ff6f61">Total:</b> <span style="color: #27ae60; font-weight: 700;">Bs. {{ calcularTotal(ventaDetalle).toFixed(2) }}</span>
+        </p>
+
+        <h4 style="color: #27ae60; margin: 20px 0 12px 0;">Items de la venta</h4>
+
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th class="text-center">Tipo</th>
+              <th class="text-center">Descripción</th>
+              <th class="text-center">Cant.</th>
+              <th class="text-center">Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in detalles" :key="item.id">
+              <td class="text-center">
+                {{ item.idProducto ? 'Producto' : 'Servicio' }}
+              </td>
+              <td class="text-center">
+                <span v-if="item.tipoItem === 'producto' && item.producto">
+                  {{ item.producto.nombre }}
+                </span>
+                <span v-else-if="item.tipoItem === 'servicio' && item.servicio">
+                  {{ item.servicio.nombre }}
+                </span>
+                <span v-else>Desconocido</span>
+              </td>
+              <td class="text-center">{{ item.cantidad }}</td>
+              <td class="text-center">Bs. {{ Number(item.precioUnitario).toFixed(2) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <template #footer>
+        <Button label="Cerrar" @click="mostrarDetalleDialog = false" severity="secondary" />
+      </template>
+    </Dialog>
   </div>
 </template>
 
@@ -193,8 +330,18 @@ onMounted(() => {
 .activity-amount {
   font-size: 18px;
   font-weight: 700;
-  color: #ff6f61;
+  color: #27ae60;
   flex-shrink: 0;
+}
+
+.activity-item.clickable {
+  cursor: pointer;
+}
+
+.activity-item.clickable:hover {
+  background: linear-gradient(to right, #f0f9ff, #ffffff);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 /* Skeleton Loading */
@@ -274,5 +421,48 @@ onMounted(() => {
   .activity-amount {
     align-self: flex-end;
   }
+}
+
+/* Estilos de tabla para el dialog de detalle */
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.styled-table thead tr {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  text-align: center;
+  font-weight: 600;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 16px;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f8f9fa;
+}
+
+.styled-table tbody tr:last-of-type {
+  border-bottom: 2px solid #667eea;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #e8eaf6;
+}
+
+.text-center {
+  text-align: center;
 }
 </style>

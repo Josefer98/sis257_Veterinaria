@@ -4,21 +4,17 @@ import type { Mascota } from '@/models/mascota'
 import http from '@/plugins/axios'
 import {
   Button,
-  Calendar,
   Dialog,
-  Dropdown,
-  InputMask,
   InputNumber,
   InputText,
   Select,
-  Textarea,
 } from 'primevue'
 import { computed, ref, watch } from 'vue'
 
 const ENDPOINT = 'mascotas'
 const props = defineProps({
   mostrar: Boolean,
-  producto: {
+  mascota: {
     type: Object as () => Mascota,
     default: () => ({}) as Mascota,
   },
@@ -45,7 +41,11 @@ watch(
 )
 
 async function obtenerCliente() {
-  clientes.value = await http.get('clientes').then((response) => response.data)
+  const data = await http.get('clientes').then((response) => response.data)
+  clientes.value = data.map((c: Cliente) => ({
+    ...c,
+    labelCliente: `${c.nombres} ${c.apellidos}`,
+  }))
 }
 
 async function handleSave() {
@@ -111,7 +111,7 @@ watch(
             <Select
               v-model="mascota.idCliente"
               :options="clientes"
-              optionLabel="nombres"
+              optionLabel="labelCliente"
               optionValue="id"
               class="flex-auto"
               placeholder="Seleccionar cliente"

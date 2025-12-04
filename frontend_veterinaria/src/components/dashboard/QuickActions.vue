@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
+import CategoriaSave from '@/components/categoria/CategoriaSave.vue'
+import ClienteSave from '@/components/cliente/ClienteSave.vue'
+import MascotaSave from '@/components/mascota/MascotaSave.vue'
+import ProductoSave from '@/components/producto/ProductoSave.vue'
+import ServicioSave from '@/components/servicio/ServicioSave.vue'
+import TipoServicioSave from '@/components/tipoServicio/TipoServicioSave.vue'
+import VentaSave from '@/components/venta/VentaSave.vue'
+import { ref } from 'vue'
 
 interface QuickAction {
   title: string
   description: string
   icon: string
-  route: string
+  key: string
   color: string
 }
 
@@ -16,48 +21,96 @@ const actions: QuickAction[] = [
     title: 'Nueva Venta',
     description: 'Registrar una nueva venta',
     icon: 'pi-shopping-cart',
-    route: '/ventas',
+    key: 'venta',
     color: 'blue',
   },
   {
     title: 'Nuevo Cliente',
     description: 'Registrar nuevo cliente',
     icon: 'pi-user-plus',
-    route: '/clientes',
+    key: 'cliente',
     color: 'green',
   },
   {
     title: 'Nueva Mascota',
     description: 'Registrar nueva mascota',
     icon: 'pi-heart',
-    route: '/mascotas',
+    key: 'mascota',
     color: 'purple',
   },
   {
-    title: 'Productos',
-    description: 'Gestionar inventario',
+    title: 'Nuevo Producto',
+    description: 'Registrar nuevo producto',
     icon: 'pi-box',
-    route: '/productos',
+    key: 'producto',
     color: 'orange',
   },
   {
-    title: 'Servicios',
-    description: 'Gestionar servicios',
+    title: 'Nuevo Servicio',
+    description: 'Registrar nuevo servicio',
     icon: 'pi-briefcase',
-    route: '/servicios',
+    key: 'servicio',
     color: 'pink',
   },
   {
-    title: 'Categorías',
-    description: 'Gestionar categorías',
+    title: 'Nueva Categoría',
+    description: 'Registrar nueva categoría',
     icon: 'pi-tags',
-    route: '/categorias',
+    key: 'categoria',
     color: 'teal',
+  },
+  {
+    title: 'Nuevo Tipo Servicio',
+    description: 'Registrar tipo de servicio',
+    icon: 'pi-cog',
+    key: 'tipoServicio',
+    color: 'indigo',
   },
 ]
 
-function navigateTo(route: string) {
-  router.push(route)
+const mostrarVenta = ref(false)
+const mostrarCliente = ref(false)
+const mostrarMascota = ref(false)
+const mostrarProducto = ref(false)
+const mostrarServicio = ref(false)
+const mostrarCategoria = ref(false)
+const mostrarTipoServicio = ref(false)
+
+function handleAction(key: string) {
+  switch (key) {
+    case 'venta':
+      mostrarVenta.value = true
+      break
+    case 'cliente':
+      mostrarCliente.value = true
+      break
+    case 'mascota':
+      mostrarMascota.value = true
+      break
+    case 'producto':
+      mostrarProducto.value = true
+      break
+    case 'servicio':
+      mostrarServicio.value = true
+      break
+    case 'categoria':
+      mostrarCategoria.value = true
+      break
+    case 'tipoServicio':
+      mostrarTipoServicio.value = true
+      break
+  }
+}
+
+function handleGuardar() {
+  // Opcional: Mostrar mensaje de éxito o recargar datos del dashboard si es necesario
+  mostrarVenta.value = false
+  mostrarCliente.value = false
+  mostrarMascota.value = false
+  mostrarProducto.value = false
+  mostrarServicio.value = false
+  mostrarCategoria.value = false
+  mostrarTipoServicio.value = false
 }
 </script>
 
@@ -71,9 +124,9 @@ function navigateTo(route: string) {
     <div class="actions-grid">
       <div
         v-for="action in actions"
-        :key="action.route"
+        :key="action.key"
         :class="['action-card', `action-${action.color}`]"
-        @click="navigateTo(action.route)"
+        @click="handleAction(action.key)"
       >
         <div class="action-icon">
           <i :class="['pi', action.icon]"></i>
@@ -83,10 +136,47 @@ function navigateTo(route: string) {
           <p class="action-description">{{ action.description }}</p>
         </div>
         <div class="action-arrow">
-          <i class="pi pi-arrow-right"></i>
+          <i class="pi pi-plus"></i>
         </div>
       </div>
     </div>
+
+    <!-- Diálogos -->
+    <VentaSave
+      :mostrar="mostrarVenta"
+      @guardar="handleGuardar"
+      @close="mostrarVenta = false"
+    />
+    <ClienteSave
+      :mostrar="mostrarCliente"
+      @guardar="handleGuardar"
+      @close="mostrarCliente = false"
+    />
+    <MascotaSave
+      :mostrar="mostrarMascota"
+      @guardar="handleGuardar"
+      @close="mostrarMascota = false"
+    />
+    <ProductoSave
+      :mostrar="mostrarProducto"
+      @guardar="handleGuardar"
+      @close="mostrarProducto = false"
+    />
+    <ServicioSave
+      :mostrar="mostrarServicio"
+      @guardar="handleGuardar"
+      @close="mostrarServicio = false"
+    />
+    <CategoriaSave
+      :mostrar="mostrarCategoria"
+      @guardar="handleGuardar"
+      @close="mostrarCategoria = false"
+    />
+    <TipoServicioSave
+      :mostrar="mostrarTipoServicio"
+      @guardar="handleGuardar"
+      @close="mostrarTipoServicio = false"
+    />
   </div>
 </template>
 
@@ -205,6 +295,14 @@ function navigateTo(route: string) {
 
 .action-teal::before {
   background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+}
+
+.action-indigo .action-icon {
+  background: linear-gradient(135deg, #6610f2 0%, #6f42c1 100%);
+}
+
+.action-indigo::before {
+  background: linear-gradient(135deg, #6610f2 0%, #6f42c1 100%);
 }
 
 .action-icon {

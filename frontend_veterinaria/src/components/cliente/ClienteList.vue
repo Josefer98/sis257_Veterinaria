@@ -56,22 +56,22 @@ defineExpose({ obtenerLista })
     <table class="styled-table">
       <thead>
         <tr>
-          <th><i class="pi pi-hashtag"></i> Nro.</th>
-          <th><i class="pi pi-user"></i> Nombres</th>
-          <th><i class="pi pi-id-card"></i> Apellidos</th>
-          <th><i class="pi pi-phone"></i> Teléfono</th>
-          <th><i class="pi pi-map-marker"></i> Dirección</th>
-          <th><i class="pi pi-cog"></i> Acciones</th>
+          <th class="text-center"><i class="pi pi-hashtag"></i> Nro.</th>
+          <th class="text-center"><i class="pi pi-user"></i> Nombres</th>
+          <th class="text-center"><i class="pi pi-id-card"></i> Apellidos</th>
+          <th class="text-center"><i class="pi pi-phone"></i> Teléfono</th>
+          <th class="text-center"><i class="pi pi-map-marker"></i> Dirección</th>
+          <th class="text-center"><i class="pi pi-cog"></i> Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(cliente, index) in clientesFiltrados" :key="cliente.id">
-          <td>{{ index + 1 }}</td>
-          <td>{{ cliente.nombres }}</td>
-          <td>{{ cliente.apellidos }}</td>
-          <td>{{ cliente.telefono }}</td>
-          <td>{{ cliente.direccion }}</td>
-          <td>
+          <td class="text-center">{{ index + 1 }}</td>
+          <td class="text-center">{{ cliente.nombres }}</td>
+          <td class="text-center">{{ cliente.apellidos }}</td>
+          <td class="text-center">{{ cliente.telefono }}</td>
+          <td class="text-center">{{ cliente.direccion }}</td>
+          <td class="text-center">
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(cliente)" />
             <Button
               icon="pi pi-trash"
@@ -149,7 +149,6 @@ defineExpose({ obtenerLista })
 .styled-table thead th {
   color: white;
   padding: 16px 20px;
-  text-align: left;
   font-weight: 600;
   font-size: 14px;
   text-transform: uppercase;
@@ -164,12 +163,10 @@ defineExpose({ obtenerLista })
 }
 
 .styled-table thead th:first-child {
-  text-align: center;
   width: 80px;
 }
 
 .styled-table thead th:last-child {
-  text-align: center;
   width: 120px;
 }
 
@@ -204,19 +201,13 @@ defineExpose({ obtenerLista })
   padding: 16px 20px;
   border: none;
   color: #333;
-  text-align: left;
   font-size: 14px;
 }
 
 .styled-table tbody td:first-child {
-  text-align: center;
   font-weight: 600;
   color: #ff6f61;
   font-size: 15px;
-}
-
-.styled-table tbody td:last-child {
-  text-align: center;
 }
 
 /* ===== BADGES Y ELEMENTOS ===== */

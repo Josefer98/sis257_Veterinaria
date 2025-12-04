@@ -226,198 +226,213 @@ function clienteGuardado(nuevoCliente: Cliente) {
     <Dialog
       v-model:visible="dialogVisible"
       :header="props.modoEdicion ? 'Editar Venta' : 'Nueva Venta'"
-      style="width: 85rem"
+      style="width: 90rem; max-height: 90vh"
       :modal="true"
     >
-      <!-- SECCIÓN: INFORMACIÓN DE VENTA -->
-      <div class="section-card">
-        <div class="section-header">
-          <i class="pi pi-user section-icon"></i>
-          <h4 class="section-title">Información de la Venta</h4>
-        </div>
-
-        <div class="section-content">
-          <!-- CLIENTE -->
-          <div class="form-row">
-            <label class="form-label">
-              <i class="pi pi-user label-icon"></i>
-              Cliente
-            </label>
-            <div class="input-with-button">
-              <Select
-                v-model="venta.idCliente"
-                :options="clientes"
-                optionLabel="labelCliente"
-                optionValue="id"
-                placeholder="Seleccionar cliente"
-                class="flex-auto"
-                :filter="true"
-              />
-              <Button
-                icon="pi pi-plus"
-                label="Nuevo"
-                size="small"
-                severity="success"
-                @click="clienteDialogVisible = true"
-              />
-            </div>
-          </div>
-
-          <!-- MASCOTA -->
-          <div class="form-row">
-            <label class="form-label">
-              <i class="pi pi-heart label-icon"></i>
-              Mascota
-            </label>
-            <Select
-              v-model="venta.idMascota"
-              :options="mascotasDelCliente"
-              optionLabel="nombre"
-              optionValue="id"
-              placeholder="Seleccionar mascota (opcional)"
-              class="flex-auto"
-              :disabled="!venta.idCliente"
-            />
-          </div>
-
-          <!-- FECHA -->
-          <div class="form-row">
-            <label class="form-label">
-              <i class="pi pi-calendar label-icon"></i>
-              Fecha
-            </label>
-            <Calendar v-model="venta.fecha" class="flex-auto" dateFormat="dd/mm/yy" disabled />
-          </div>
-        </div>
-      </div>
-
-      <!-- SECCIÓN: AGREGAR ITEMS -->
-      <div class="section-card">
-        <div class="section-header">
-          <i class="pi pi-shopping-cart section-icon"></i>
-          <h4 class="section-title">Agregar Items</h4>
-        </div>
-
-        <div class="section-content">
-          <!-- TIPO Y SELECCIÓN EN UNA FILA -->
-          <div class="form-row-inline">
-            <div class="form-group">
-              <label class="form-label-small">Tipo</label>
-              <Dropdown
-                v-model="nuevoItem.tipoItem"
-                :options="[
-                  { label: 'Producto', value: 'producto' },
-                  { label: 'Servicio', value: 'servicio' },
-                ]"
-                optionLabel="label"
-                optionValue="value"
-                class="w-full"
-              />
+      <!-- GRID DE DOS COLUMNAS -->
+      <div class="venta-grid">
+        <!-- COLUMNA IZQUIERDA: INFORMACIÓN -->
+        <div class="columna-izquierda">
+          <!-- SECCIÓN: INFORMACIÓN DE VENTA -->
+          <div class="section-card">
+            <div class="section-header">
+              <i class="pi pi-user section-icon"></i>
+              <h4 class="section-title">Información de la Venta</h4>
             </div>
 
-            <!-- PRODUCTO -->
-            <div v-if="nuevoItem.tipoItem === 'producto'" class="form-group flex-grow">
-              <label class="form-label-small">Producto</label>
-              <Dropdown
-                v-model="nuevoItem.idProducto"
-                :options="productos"
-                optionLabel="nombre"
-                optionValue="id"
-                placeholder="Seleccionar producto"
-                class="w-full"
-              />
+            <div class="section-content">
+              <!-- CLIENTE -->
+              <div class="form-row">
+                <label class="form-label">
+                  <i class="pi pi-user label-icon"></i>
+                  Cliente
+                </label>
+                <div class="input-with-button">
+                  <Select
+                    v-model="venta.idCliente"
+                    :options="clientes"
+                    optionLabel="labelCliente"
+                    optionValue="id"
+                    placeholder="Seleccionar cliente"
+                    class="flex-auto"
+                    :filter="true"
+                  />
+                  <Button
+                    icon="pi pi-plus"
+                    label="Nuevo"
+                    size="small"
+                    severity="success"
+                    @click="clienteDialogVisible = true"
+                  />
+                </div>
+              </div>
+
+              <!-- MASCOTA -->
+              <div class="form-row">
+                <label class="form-label">
+                  <i class="pi pi-heart label-icon"></i>
+                  Mascota
+                </label>
+                <Select
+                  v-model="venta.idMascota"
+                  :options="mascotasDelCliente"
+                  optionLabel="nombre"
+                  optionValue="id"
+                  placeholder="Seleccionar mascota (opcional)"
+                  class="flex-auto"
+                  :disabled="!venta.idCliente"
+                />
+              </div>
+
+              <!-- FECHA -->
+              <div class="form-row">
+                <label class="form-label">
+                  <i class="pi pi-calendar label-icon"></i>
+                  Fecha
+                </label>
+                <Calendar v-model="venta.fecha" class="flex-auto" dateFormat="dd/mm/yy" disabled />
+              </div>
             </div>
-
-            <!-- SERVICIO -->
-            <div v-if="nuevoItem.tipoItem === 'servicio'" class="form-group flex-grow">
-              <label class="form-label-small">Servicio</label>
-              <Dropdown
-                v-model="nuevoItem.idServicio"
-                :options="servicios"
-                optionLabel="nombre"
-                optionValue="id"
-                placeholder="Seleccionar servicio"
-                class="w-full"
-              />
-            </div>
-
-            <!-- CANTIDAD -->
-            <div class="form-group">
-              <label class="form-label-small">Cantidad</label>
-              <InputNumber v-model="nuevoItem.cantidad" :min="1" class="w-full" />
-            </div>
-
-            <!-- BOTÓN AGREGAR -->
-            <div class="form-group align-end">
-              <Button label="Agregar" icon="pi pi-plus" @click="agregarItem" class="add-button" />
-            </div>
-          </div>
-
-          <!-- TABLA DE ITEMS AGREGADOS -->
-          <div class="items-table-wrapper">
-            <h5 class="items-subtitle">Items en carrito</h5>
-            <table class="elegant-table">
-              <thead>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Descripción</th>
-                  <th>Cantidad</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, i) in items" :key="i">
-                  <td>
-                    <span
-                      class="badge"
-                      :class="item.tipoItem === 'producto' ? 'badge-product' : 'badge-service'"
-                    >
-                      {{ item.tipoItem === 'producto' ? 'Producto' : 'Servicio' }}
-                    </span>
-                  </td>
-                  <td class="item-name">
-                    {{
-                      item.tipoItem === 'producto'
-                        ? productos.find((p) => p.id === item.idProducto)?.nombre
-                        : servicios.find((s) => s.id === item.idServicio)?.nombre
-                    }}
-                  </td>
-                  <td class="text-center">
-                    <span class="quantity-badge">{{ item.cantidad }}</span>
-                  </td>
-                  <td class="text-center">
-                    <Button
-                      icon="pi pi-trash"
-                      severity="danger"
-                      text
-                      rounded
-                      @click="eliminarItem(i)"
-                    />
-                  </td>
-                </tr>
-
-                <tr v-if="items.length === 0">
-                  <td colspan="4" class="empty-state">
-                    <i class="pi pi-inbox empty-icon"></i>
-                    <p>No hay items agregados</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
 
-        <!-- TOTAL -->
-        <div class="total-section">
-          <label class="total-label">Total:</label>
-          <InputNumber
-            v-model="venta.total"
-            disabled
-            mode="currency"
-            currency="BOB"
-            locale="es-BO"
-            class="total-input"
-          />
+        <!-- COLUMNA DERECHA: ITEMS -->
+        <div class="columna-derecha">
+          <!-- SECCIÓN: AGREGAR ITEMS -->
+          <div class="section-card">
+            <div class="section-header">
+              <i class="pi pi-shopping-cart section-icon"></i>
+              <h4 class="section-title">Agregar Items</h4>
+            </div>
+
+            <div class="section-content compact-content">
+              <!-- TIPO Y SELECCIÓN EN UNA FILA -->
+              <div class="form-row-inline">
+                <div class="form-group">
+                  <label class="form-label-small">Tipo</label>
+                  <Dropdown
+                    v-model="nuevoItem.tipoItem"
+                    :options="[
+                      { label: 'Producto', value: 'producto' },
+                      { label: 'Servicio', value: 'servicio' },
+                    ]"
+                    optionLabel="label"
+                    optionValue="value"
+                    class="w-full"
+                  />
+                </div>
+
+                <!-- PRODUCTO -->
+                <div v-if="nuevoItem.tipoItem === 'producto'" class="form-group flex-grow">
+                  <label class="form-label-small">Producto</label>
+                  <Dropdown
+                    v-model="nuevoItem.idProducto"
+                    :options="productos"
+                    optionLabel="nombre"
+                    optionValue="id"
+                    placeholder="Seleccionar producto"
+                    class="w-full"
+                  />
+                </div>
+
+                <!-- SERVICIO -->
+                <div v-if="nuevoItem.tipoItem === 'servicio'" class="form-group flex-grow">
+                  <label class="form-label-small">Servicio</label>
+                  <Dropdown
+                    v-model="nuevoItem.idServicio"
+                    :options="servicios"
+                    optionLabel="nombre"
+                    optionValue="id"
+                    placeholder="Seleccionar servicio"
+                    class="w-full"
+                  />
+                </div>
+
+                <!-- CANTIDAD -->
+                <div class="form-group">
+                  <label class="form-label-small">Cant.</label>
+                  <InputNumber v-model="nuevoItem.cantidad" :min="1" class="w-full" />
+                </div>
+
+                <!-- BOTÓN AGREGAR -->
+                <div class="form-group align-end">
+                  <Button
+                    icon="pi pi-plus"
+                    @click="agregarItem"
+                    class="add-button-compact"
+                    severity="success"
+                  />
+                </div>
+              </div>
+
+              <!-- TABLA DE ITEMS AGREGADOS -->
+              <div class="items-table-wrapper compact">
+                <h5 class="items-subtitle">Carrito</h5>
+                <table class="elegant-table">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Tipo</th>
+                      <th>Descripción</th>
+                      <th class="text-center">Cant.</th>
+                      <th class="text-center"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, i) in items" :key="i">
+                      <td class="text-center">
+                        <span
+                          class="badge"
+                          :class="item.tipoItem === 'producto' ? 'badge-product' : 'badge-service'"
+                        >
+                          {{ item.tipoItem === 'producto' ? 'Producto' : 'Servicio' }}
+                        </span>
+                      </td>
+                      <td class="item-name">
+                        {{
+                          item.tipoItem === 'producto'
+                            ? productos.find((p) => p.id === item.idProducto)?.nombre
+                            : servicios.find((s) => s.id === item.idServicio)?.nombre
+                        }}
+                      </td>
+                      <td class="text-center">
+                        <span class="quantity-badge">{{ item.cantidad }}</span>
+                      </td>
+                      <td class="text-center">
+                        <Button
+                          icon="pi pi-trash"
+                          severity="danger"
+                          text
+                          rounded
+                          size="small"
+                          @click="eliminarItem(i)"
+                        />
+                      </td>
+                    </tr>
+
+                    <tr v-if="items.length === 0">
+                      <td colspan="4" class="empty-state">
+                        <i class="pi pi-inbox empty-icon"></i>
+                        <p>Carrito vacío</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TOTAL -->
+            <div class="total-section compact">
+              <label class="total-label">Total:</label>
+              <InputNumber
+                v-model="venta.total"
+                disabled
+                mode="currency"
+                currency="BOB"
+                locale="es-BO"
+                class="total-input"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -443,20 +458,37 @@ function clienteGuardado(nuevoCliente: Cliente) {
 </template>
 
 <style scoped>
+/* ===== GRID DE DOS COLUMNAS ===== */
+.venta-grid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.columna-izquierda,
+.columna-derecha {
+  display: flex;
+  flex-direction: column;
+}
+
 /* ===== SECCIONES CON TARJETAS ===== */
 .section-card {
   background: white;
   border-radius: 12px;
   padding: 0;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   border: 1px solid #f0f0f0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .section-header {
   background: linear-gradient(135deg, #ff6f61 0%, #ff8a7a 100%);
-  padding: 14px 20px;
+  padding: 12px 18px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -464,27 +496,32 @@ function clienteGuardado(nuevoCliente: Cliente) {
 
 .section-icon {
   color: white;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .section-title {
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   margin: 0;
   letter-spacing: 0.3px;
 }
 
 .section-content {
-  padding: 20px;
+  padding: 18px;
+  flex: 1;
+}
+
+.section-content.compact-content {
+  padding: 14px;
 }
 
 /* ===== FORMULARIOS ===== */
 .form-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .form-row:last-child {
@@ -494,28 +531,28 @@ function clienteGuardado(nuevoCliente: Cliente) {
 .form-label {
   font-weight: 600;
   color: #333;
-  min-width: 120px;
+  min-width: 100px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .label-icon {
   color: #ff6f61;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .input-with-button {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
 }
 
 /* ===== FORMULARIO EN LÍNEA (AGREGAR ITEMS) ===== */
 .form-row-inline {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: flex-end;
   flex-wrap: wrap;
 }
@@ -523,13 +560,13 @@ function clienteGuardado(nuevoCliente: Cliente) {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-width: 140px;
+  gap: 4px;
+  min-width: 100px;
 }
 
 .form-group.flex-grow {
   flex: 1;
-  min-width: 200px;
+  min-width: 180px;
 }
 
 .form-group.align-end {
@@ -539,7 +576,7 @@ function clienteGuardado(nuevoCliente: Cliente) {
 .form-label-small {
   font-weight: 600;
   color: #555;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .add-button {
@@ -547,19 +584,30 @@ function clienteGuardado(nuevoCliente: Cliente) {
   min-width: 120px;
 }
 
+.add-button-compact {
+  width: 42px;
+  height: 42px;
+}
+
 /* ===== WRAPPER DE TABLA DE ITEMS ===== */
 .items-table-wrapper {
-  margin-top: 24px;
+  margin-top: 20px;
+}
+
+.items-table-wrapper.compact {
+  margin-top: 16px;
+  max-height: 280px;
+  overflow-y: auto;
 }
 
 .items-subtitle {
   color: #ff6f61;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   padding-left: 4px;
   border-left: 3px solid #ff6f61;
-  padding-left: 12px;
+  padding-left: 10px;
 }
 
 /* ===== TABLA ELEGANTE ===== */
@@ -582,10 +630,10 @@ function clienteGuardado(nuevoCliente: Cliente) {
 
 .elegant-table thead th {
   color: white;
-  padding: 12px 16px;
+  padding: 10px 12px;
   text-align: left;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -615,9 +663,9 @@ function clienteGuardado(nuevoCliente: Cliente) {
 }
 
 .elegant-table tbody td {
-  padding: 12px 16px;
+  padding: 10px 12px;
   color: #333;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .elegant-table tbody td.text-center {
@@ -627,9 +675,9 @@ function clienteGuardado(nuevoCliente: Cliente) {
 /* ===== BADGES ===== */
 .badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: capitalize;
 }
@@ -648,10 +696,10 @@ function clienteGuardado(nuevoCliente: Cliente) {
   display: inline-block;
   background-color: #fff3e0;
   color: #e65100;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .item-name {
@@ -662,36 +710,41 @@ function clienteGuardado(nuevoCliente: Cliente) {
 /* ===== ESTADO VACÍO ===== */
 .empty-state {
   text-align: center;
-  padding: 40px 24px !important;
+  padding: 30px 20px !important;
   color: #999;
 }
 
 .empty-icon {
-  font-size: 48px;
+  font-size: 36px;
   color: #ddd;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .empty-state p {
   margin: 0;
   font-style: italic;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* ===== SECCIÓN TOTAL ===== */
 .total-section {
-  padding: 16px 20px;
+  padding: 14px 18px;
   background: linear-gradient(135deg, #fff5f3 0%, #ffe8e5 100%);
   border-top: 2px solid #ff6f61;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 16px;
+  gap: 14px;
+  margin-top: auto;
+}
+
+.total-section.compact {
+  padding: 12px 14px;
 }
 
 .total-label {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #ff6f61;
   text-transform: uppercase;
@@ -699,8 +752,8 @@ function clienteGuardado(nuevoCliente: Cliente) {
 }
 
 .total-input {
-  min-width: 200px;
-  font-size: 18px;
+  min-width: 180px;
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -709,12 +762,17 @@ function clienteGuardado(nuevoCliente: Cliente) {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
+  padding-top: 16px;
   border-top: 1px solid #f0f0f0;
 }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1400px) {
+  .venta-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .form-row-inline {
     flex-direction: column;
@@ -723,10 +781,6 @@ function clienteGuardado(nuevoCliente: Cliente) {
 
   .form-group {
     width: 100%;
-  }
-
-  .section-card {
-    margin-bottom: 16px;
   }
 }
 </style>

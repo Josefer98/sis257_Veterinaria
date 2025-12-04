@@ -57,22 +57,24 @@ defineExpose({ obtenerLista })
     <table class="styled-table">
       <thead>
         <tr>
-          <th><i class="pi pi-hashtag"></i> Nro.</th>
-          <th><i class="pi pi-list"></i> Tipo de Servicio</th>
-          <th><i class="pi pi-briefcase"></i> Nombre</th>
-          <th><i class="pi pi-align-left"></i> Descripción</th>
-          <th><i class="pi pi-dollar"></i> Precio</th>
-          <th><i class="pi pi-cog"></i> Acciones</th>
+          <th class="text-center"><i class="pi pi-hashtag"></i> Nro.</th>
+          <th class="text-center"><i class="pi pi-list"></i> Tipo de Servicio</th>
+          <th class="text-center"><i class="pi pi-briefcase"></i> Nombre</th>
+          <th class="text-center"><i class="pi pi-align-left"></i> Descripción</th>
+          <th class="text-center"><i class="pi pi-dollar"></i> Precio</th>
+          <th class="text-center"><i class="pi pi-cog"></i> Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(servicio, index) in serviciosFiltrados" :key="servicio.id">
-          <td>{{ index + 1 }}</td>
-          <td>{{ servicio.tipoServicio.nombre }}</td>
-          <td>{{ servicio.nombre }}</td>
-          <td>{{ servicio.descripcion }}</td>
-          <td>{{ servicio.precio }}</td>
-          <td>
+          <td class="text-center">{{ index + 1 }}</td>
+          <td class="text-center">
+            <span class="badge badge-tipo-servicio">{{ servicio.tipoServicio.nombre }}</span>
+          </td>
+          <td class="text-center">{{ servicio.nombre }}</td>
+          <td class="text-center">{{ servicio.descripcion }}</td>
+          <td class="text-center">{{ servicio.precio }}</td>
+          <td class="text-center">
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(servicio)" />
             <Button
               icon="pi pi-trash"
@@ -279,4 +281,27 @@ defineExpose({ obtenerLista })
 .styled-table tbody tr {
   animation: fadeIn 0.3s ease;
 }
+
+/* ===== BADGES DE TIPO DE SERVICIO ===== */
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+}
+
+.badge-tipo-servicio {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(240, 147, 251, 0.4);
+}
+
+.badge-tipo-servicio:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.5);
+}
+
 </style>
