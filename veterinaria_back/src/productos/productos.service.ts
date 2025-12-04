@@ -26,15 +26,15 @@ export class ProductosService {
   async findAll(): Promise<Producto[]> {
     return this.productosRepository.find({
       relations: { categoria: true },
-      select:{
-        id:true,
-        nombre:true,
-        descripcion:true,
-        precio:true,
-        stock:true,
-        imagenUrl:true,
-        categoria:{id:true, nombre:true}
-      }
+      select: {
+        id: true,
+        nombre: true,
+        descripcion: true,
+        precio: true,
+        stock: true,
+        imagenUrl: true,
+        categoria: { id: true, nombre: true },
+      },
     });
   }
 
@@ -44,7 +44,10 @@ export class ProductosService {
     return producto;
   }
 
- async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
+  async update(
+    id: number,
+    updateProductoDto: UpdateProductoDto,
+  ): Promise<Producto> {
     const producto = await this.findOne(id);
     Object.assign(producto, updateProductoDto);
     return this.productosRepository.save(producto);

@@ -24,10 +24,10 @@ export class Venta {
   @Column('integer', { name: 'id_mascota', nullable: true })
   idMascota?: number;
 
-  @Column('date', { name: 'fecha', default:() => 'CURRENT_DATE' })
+  @Column('date', { name: 'fecha', default: () => 'CURRENT_DATE' })
   fecha: Date;
 
-  @Column('decimal', { name: 'total', precision: 10, scale: 2, default:0.00 })
+  @Column('decimal', { name: 'total', precision: 10, scale: 2, default: 0.0 })
   total: number;
 
   @CreateDateColumn({ name: 'fecha_creacion' })
@@ -50,4 +50,3 @@ export class Venta {
   @OneToMany(() => DetalleVenta, (detalleVenta) => detalleVenta.venta)
   detalleVentas: DetalleVenta[];
 }
-

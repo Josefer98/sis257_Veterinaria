@@ -17,7 +17,7 @@ export class Mascota {
   id: number;
 
   @Column('integer', { name: 'id_cliente' })
-  idCliente: number; 
+  idCliente: number;
 
   @Column('varchar', { name: 'nombre', length: 100 })
   nombre: string;

@@ -12,20 +12,21 @@ import { DetalleVenta } from 'src/detalle-ventas/entities/detalle-venta.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
 
-
 @Injectable()
 export class VentasService {
   constructor(
     @InjectRepository(Venta) private ventasRepository: Repository<Venta>,
     @InjectRepository(DetalleVenta)
     private detalleVentasRepository: Repository<DetalleVenta>,
-    @InjectRepository(Producto) private productosRepository: Repository<Producto>,
-    @InjectRepository(Servicio) private serviciosRepository: Repository<Servicio>,
-    private dataSource: DataSource
+    @InjectRepository(Producto)
+    private productosRepository: Repository<Producto>,
+    @InjectRepository(Servicio)
+    private serviciosRepository: Repository<Servicio>,
+    private dataSource: DataSource,
   ) {}
 
   async create(createVentaDto: CreateVentaDto): Promise<Venta> {
-    return await this.dataSource.transaction(async (manager)=>{
+    return await this.dataSource.transaction(async (manager) => {
       const venta = manager.create(Venta, {
         idCliente: createVentaDto.idCliente,
         idMascota: createVentaDto.idMascota,
@@ -38,19 +39,32 @@ export class VentasService {
       for (const item of createVentaDto.items) {
         let precioUnitario = 0;
         //Producto
-        if(item.tipoItem === 'producto'){
-          const producto =  await manager.findOne(Producto, {where:{id: item.idProducto}});
-          if(!producto) throw new NotFoundException(`Producto con id ${item.idProducto} no encontrado`);
-          if(producto.stock < item.cantidad) throw new ConflictException(`Stock insuficiente para el producto ${producto.nombre}`);
-          
+        if (item.tipoItem === 'producto') {
+          const producto = await manager.findOne(Producto, {
+            where: { id: item.idProducto },
+          });
+          if (!producto)
+            throw new NotFoundException(
+              `Producto con id ${item.idProducto} no encontrado`,
+            );
+          if (producto.stock < item.cantidad)
+            throw new ConflictException(
+              `Stock insuficiente para el producto ${producto.nombre}`,
+            );
+
           producto.stock -= item.cantidad;
           await manager.save(producto);
           precioUnitario = Number(producto.precio);
         }
         //Servicio
-        if(item.tipoItem === 'servicio'){
-          const servicio =  await manager.findOne(Servicio, {where:{id: item.idServicio}});
-          if(!servicio) throw new NotFoundException(`Servicio con id ${item.idServicio} no encontrado`);
+        if (item.tipoItem === 'servicio') {
+          const servicio = await manager.findOne(Servicio, {
+            where: { id: item.idServicio },
+          });
+          if (!servicio)
+            throw new NotFoundException(
+              `Servicio con id ${item.idServicio} no encontrado`,
+            );
           precioUnitario = Number(servicio.precio);
         }
         const subtotal = precioUnitario * item.cantidad;
@@ -64,13 +78,13 @@ export class VentasService {
           precioUnitario,
           subtotal,
         });
-        await  manager.save(detalle);
+        await manager.save(detalle);
       }
       venta.total = totalVenta;
       await manager.save(venta);
-      
+
       return venta;
-    })
+    });
   }
 
   async findAll(): Promise<Venta[]> {

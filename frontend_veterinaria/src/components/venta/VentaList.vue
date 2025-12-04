@@ -43,7 +43,13 @@ function mostrarEliminarConfirm(venta: Venta) {
 function formatearFecha(fecha?: string | Date | null) {
   if (!fecha) return ''
   const d = fecha instanceof Date ? fecha : new Date(fecha)
-  return d.toLocaleDateString('es-BO') // dd/mm/aaaa
+  d.setDate(d.getDate() + 1)
+
+  const dia = d.getDate().toString().padStart(2, '0')
+  const mes = (d.getMonth() + 1).toString().padStart(2, '0')
+  const anio = d.getFullYear()
+
+  return `${dia}/${mes}/${anio}`
 }
 
 async function eliminar() {
@@ -66,7 +72,7 @@ async function verDetalle(venta: Venta) {
 
   // Obtener los detalles desde el backend
   const detallesRaw = await http.get(`detalle-ventas/venta/${venta.id}`).then((res) => res.data)
-  
+
   // Debug: ver qué datos devuelve el backend
   console.log('Detalles de venta (raw):', detallesRaw)
 
@@ -91,7 +97,7 @@ async function verDetalle(venta: Venta) {
         }
       }
       return item
-    })
+    }),
   )
 
   detalles.value = detallesEnriquecidos
@@ -176,10 +182,10 @@ async function verDetalle(venta: Venta) {
       <template #header>
         <div class="recibo-header">
           <div class="header-left">
-            <i class="pi pi-receipt" style="font-size: 28px; color: #ff6f61;"></i>
+            <i class="pi pi-receipt" style="font-size: 28px; color: #ff6f61"></i>
             <div>
-              <h2 style="margin: 0; color: #2c3e50; font-size: 22px;">Detalle de Venta</h2>
-              <span style="color: #7f8c8d; font-size: 14px;">Registro #{{ ventaDetalle?.id }}</span>
+              <h2 style="margin: 0; color: #2c3e50; font-size: 22px">Detalle de Venta</h2>
+              <span style="color: #7f8c8d; font-size: 14px">Registro #{{ ventaDetalle?.id }}</span>
             </div>
           </div>
         </div>
@@ -220,7 +226,12 @@ async function verDetalle(venta: Venta) {
                     <span class="item-icon">{{ item.idProducto ? '📦' : '🩺' }}</span>
                     <div class="item-text">
                       <span class="item-nombre">
-                        {{ item.producto?.nombre || item.servicio?.nombre || item.descripcion || 'Sin descripción' }}
+                        {{
+                          item.producto?.nombre ||
+                          item.servicio?.nombre ||
+                          item.descripcion ||
+                          'Sin descripción'
+                        }}
                       </span>
                       <span class="item-tipo">{{ item.idProducto ? 'Producto' : 'Servicio' }}</span>
                     </div>
@@ -228,7 +239,9 @@ async function verDetalle(venta: Venta) {
                 </td>
                 <td class="col-cantidad">{{ item.cantidad }}</td>
                 <td class="col-precio">Bs. {{ Number(item.precioUnitario).toFixed(2) }}</td>
-                <td class="col-subtotal">Bs. {{ (Number(item.precioUnitario) * Number(item.cantidad)).toFixed(2) }}</td>
+                <td class="col-subtotal">
+                  Bs. {{ (Number(item.precioUnitario) * Number(item.cantidad)).toFixed(2) }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -239,7 +252,7 @@ async function verDetalle(venta: Venta) {
 
         <!-- Total -->
         <div class="recibo-total">
-         <div class="total-row">
+          <div class="total-row">
             <span class="total-label">TOTAL</span>
             <span class="total-monto">Bs. {{ Number(ventaDetalle.total).toFixed(2) }}</span>
           </div>

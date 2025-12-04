@@ -37,7 +37,7 @@ import { TipoServiciosModule } from './tipo-servicios/tipo-servicios.module';
     UsuariosModule,
     AuthModule,
     CategoriasModule,
-    TipoServiciosModule
+    TipoServiciosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

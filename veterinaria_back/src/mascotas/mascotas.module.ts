@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Mascota } from './entities/mascota.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Mascota])],
+  imports: [TypeOrmModule.forFeature([Mascota])],
   controllers: [MascotasController],
   providers: [MascotasService],
 })

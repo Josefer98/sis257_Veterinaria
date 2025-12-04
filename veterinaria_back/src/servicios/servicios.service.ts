@@ -6,13 +6,12 @@ import { Servicio } from './entities/servicio.entity';
 import { Repository } from 'typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 
-
 @Injectable()
 export class ServiciosService {
   constructor(
     @InjectRepository(Servicio)
-    private serviciosRepository: Repository<Servicio>
-  ) { }
+    private serviciosRepository: Repository<Servicio>,
+  ) {}
 
   async create(createServicioDto: CreateServicioDto): Promise<Servicio> {
     let servicio = await this.serviciosRepository.findOneBy({
@@ -28,13 +27,13 @@ export class ServiciosService {
   async findAll(): Promise<Servicio[]> {
     return this.serviciosRepository.find({
       relations: { tipoServicio: true },
-      select:{
-        id:true,
-        nombre:true,
-        descripcion:true,
-        precio:true,
-        tipoServicio:{id:true, nombre:true}
-      }
+      select: {
+        id: true,
+        nombre: true,
+        descripcion: true,
+        precio: true,
+        tipoServicio: { id: true, nombre: true },
+      },
     });
   }
 
@@ -44,11 +43,14 @@ export class ServiciosService {
     return servicio;
   }
 
-  async update(id: number, UpdateServicioDto: UpdateServicioDto): Promise<Servicio> {
-      const producto = await this.findOne(id);
-      Object.assign(producto, UpdateServicioDto);
-      return this.serviciosRepository.save(producto);
-    }
+  async update(
+    id: number,
+    UpdateServicioDto: UpdateServicioDto,
+  ): Promise<Servicio> {
+    const producto = await this.findOne(id);
+    Object.assign(producto, UpdateServicioDto);
+    return this.serviciosRepository.save(producto);
+  }
   async remove(id: number): Promise<Servicio> {
     const servicio = await this.findOne(id);
     return this.serviciosRepository.softRemove(servicio);

@@ -48,7 +48,7 @@ export class Producto {
   @OneToMany(() => DetalleVenta, (detalleVenta) => detalleVenta.producto)
   detalleVentas: DetalleVenta[];
 
-  @ManyToOne(()=> Categoria, (categoria)=> categoria.productos)
-  @JoinColumn({name: 'id_categoria', referencedColumnName: 'id'})
+  @ManyToOne(() => Categoria, (categoria) => categoria.productos)
+  @JoinColumn({ name: 'id_categoria', referencedColumnName: 'id' })
   categoria: Categoria;
 }

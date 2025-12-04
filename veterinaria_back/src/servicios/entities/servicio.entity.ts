@@ -1,7 +1,16 @@
-
 import { DetalleVenta } from 'src/detalle-ventas/entities/detalle-venta.entity';
 import { TipoServicio } from 'src/tipo-servicios/entities/tipo-servicio.entity';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('servicios')
 export class Servicio {
@@ -27,11 +36,11 @@ export class Servicio {
 
   @DeleteDateColumn({ name: 'fecha_eliminacion' })
   fechaEliminacion: Date;
-  
-  @OneToMany(()=> DetalleVenta, (detalleVenta) => detalleVenta.servicio)
+
+  @OneToMany(() => DetalleVenta, (detalleVenta) => detalleVenta.servicio)
   detalleVentas: DetalleVenta[];
 
-  @ManyToOne(()=> TipoServicio, (tipoServicio)=> tipoServicio.servicios)
-  @JoinColumn({name: 'id_tipo_servicio', referencedColumnName: 'id'})
+  @ManyToOne(() => TipoServicio, (tipoServicio) => tipoServicio.servicios)
+  @JoinColumn({ name: 'id_tipo_servicio', referencedColumnName: 'id' })
   tipoServicio: TipoServicio;
 }

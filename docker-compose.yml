@@ -1,0 +1,56 @@
+networks:
+  net-veterinaria:
+    name: net-veterinaria
+    driver: bridge
+
+services:
+  veterinaria-db:
+    image: postgres
+    container_name: db-veterinaria
+    restart: always
+    ports:
+      - "5434:5432"
+    networks:
+      - net-veterinaria
+    environment:
+      POSTGRES_DB: veterinaria_bd
+      POSTGRES_USER: bd_veterinaria
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - ./pgdata:/var/lib/postgresql/18/docker
+
+  backend-veterinaria:
+    depends_on:
+      - veterinaria-db
+    image: be-veterinaria
+    container_name: api-veterinaria
+    restart: unless-stopped
+    build:
+      context: ./veterinaria_back
+    ports:
+      - 3000:3000
+    networks:
+      - net-veterinaria
+    environment:
+      DB_HOST: veterinaria-db
+    volumes:
+      - ./veterinaria_back:/usr/src/app
+      - /usr/src/app/node_modules/
+
+  frontend-veterinaria:
+    depends_on:
+        - backend-veterinaria
+    image: fe-veterinaria
+    container_name: app-veterinaria
+    restart: unless-stopped
+    build:
+      context: ./frontend_veterinaria
+      dockerfile: Dockerfile
+    ports:
+      - 85:85
+    networks:
+      - net-veterinaria
+    environment:
+      VITE_BASE_URL_ENDPOINT: backend-veterinaria
+    volumes:
+      - /usr/src/app/node_modules/

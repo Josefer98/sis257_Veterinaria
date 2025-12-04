@@ -28,15 +28,15 @@ export class MascotasService {
 
   async findAll(): Promise<Mascota[]> {
     return this.mascotasRepository.find({
-      relations: { clientes: true},
-      select:{
-        id:true,
-        nombre:true,
-        especie:true,
-        raza:true,
-        edad:true,
-        clientes:{id:true, nombres:true}
-      }
+      relations: { clientes: true },
+      select: {
+        id: true,
+        nombre: true,
+        especie: true,
+        raza: true,
+        edad: true,
+        clientes: { id: true, nombres: true },
+      },
     });
   }
 

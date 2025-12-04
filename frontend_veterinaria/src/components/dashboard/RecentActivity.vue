@@ -35,43 +35,62 @@ async function obtenerVentasRecientes() {
 }
 
 function parsearFecha(fecha: string | Date): Date {
-  // Si ya es un objeto Date, devolverlo
-  if (fecha instanceof Date) return fecha
-  
-  // Si la fecha viene en formato ISO o similar, necesitamos ajustarla
-  const fechaStr = fecha.toString()
-  
-  // Si la fecha no tiene hora, agregarle la hora local para evitar conversión UTC
-  if (fechaStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-    // Formato: YYYY-MM-DD (sin hora)
-    return new Date(fechaStr + 'T12:00:00')
+  if (fecha instanceof Date) return fecha;
+
+  const fechaStr = fecha.toString();
+
+  // Formato YYYY-MM-DD (sin hora)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
+    const partes = fechaStr.split('-');
+    // Asegurarnos de tener las 3 partes
+    if (partes.length === 3) {
+      const y = Number(partes[0]);
+      const m = Number(partes[1]);
+      const d = Number(partes[2]);
+
+      // Verificar que sean números válidos
+      if (!Number.isNaN(y) && !Number.isNaN(m) && !Number.isNaN(d)) {
+        return new Date(y, m - 1, d); // constructor local: año, mesIndexadoEn0, día
+      }
+    }
+    // Si las partes no son válidas, caeremos al fallback más abajo
   }
-  
-  return new Date(fechaStr)
+
+  // Fallback: intentar construir la fecha con el constructor estándar
+  const parsed = new Date(fechaStr);
+  // Si parsed es inválido (NaN), devolver la fecha actual como último recurso
+  if (Number.isNaN(parsed.getTime())) {
+    console.warn('parsearFecha: fecha inválida recibida ->', fechaStr);
+    return new Date();
+  }
+  return parsed;
 }
 
-function formatearFecha(fecha: string): string {
-  const date = parsearFecha(fecha)
-  const hoy = new Date()
-  hoy.setHours(0, 0, 0, 0)
-  const ayer = new Date(hoy)
-  ayer.setDate(ayer.getDate() - 1)
-  
-  const fechaComparar = new Date(date)
-  fechaComparar.setHours(0, 0, 0, 0)
-  
+
+
+function formatearFecha(fecha: string | Date): string {
+  const date = parsearFecha(fecha);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const ayer = new Date(hoy);
+  ayer.setDate(ayer.getDate() - 1);
+
+  const fechaComparar = new Date(date);
+  fechaComparar.setHours(0, 0, 0, 0);
+
   if (fechaComparar.getTime() === hoy.getTime()) {
-    return 'Hoy, ' + date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    return 'Hoy';
   } else if (fechaComparar.getTime() === ayer.getTime()) {
-    return 'Ayer, ' + date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    return 'Ayer';
   } else {
-    return date.toLocaleDateString('es-ES', { 
-      day: '2-digit', 
-      month: 'short', 
-      year: 'numeric' 
-    })
+    return date.toLocaleDateString('es-BO', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
   }
 }
+
 
 function calcularTotal(venta: Venta): number {
   // Por ahora retornamos el total de la venta directamente

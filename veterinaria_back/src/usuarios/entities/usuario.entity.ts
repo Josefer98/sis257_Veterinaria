@@ -29,7 +29,7 @@ export class Usuario {
 
   @DeleteDateColumn({ name: 'fecha_eliminacion' })
   fechaEliminacion: Date;
-  
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {

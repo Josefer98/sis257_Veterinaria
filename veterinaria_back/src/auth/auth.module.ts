@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-  imports:[
+  imports: [
     ConfigModule.forRoot(),
     UsuariosModule,
     PassportModule.register({}),

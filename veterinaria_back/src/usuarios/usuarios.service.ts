@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,7 +12,9 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsuariosService {
-   constructor(@InjectRepository(Usuario) private usuariosRepository: Repository<Usuario>) {}
+  constructor(
+    @InjectRepository(Usuario) private usuariosRepository: Repository<Usuario>,
+  ) {}
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
     let usuario = await this.usuariosRepository.findOneBy({
@@ -31,7 +38,10 @@ export class UsuariosService {
     return usuario;
   }
 
-  async update(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario> {
+  async update(
+    id: number,
+    updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<Usuario> {
     const usuario = await this.findOne(id);
     Object.assign(usuario, updateUsuarioDto);
     return this.usuariosRepository.save(usuario);

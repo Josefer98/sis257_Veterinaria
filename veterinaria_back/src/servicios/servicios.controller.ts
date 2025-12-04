@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ServiciosService } from './servicios.service';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
@@ -7,7 +16,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-
 @Controller('servicios')
 export class ServiciosController {
   constructor(private readonly serviciosService: ServiciosService) {}
@@ -28,7 +36,10 @@ export class ServiciosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServicioDto: UpdateServicioDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateServicioDto: UpdateServicioDto,
+  ) {
     return this.serviciosService.update(+id, updateServicioDto);
   }
 

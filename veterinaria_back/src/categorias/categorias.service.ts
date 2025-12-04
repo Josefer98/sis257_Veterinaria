@@ -49,7 +49,7 @@ export class CategoriasService {
     return this.categoriasRepository.save(categoria);
   }
 
-  async remove(id: number):Promise<Categoria> {
+  async remove(id: number): Promise<Categoria> {
     const categoria = await this.findOne(id);
     return this.categoriasRepository.softRemove(categoria);
   }
